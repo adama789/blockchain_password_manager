@@ -1,7 +1,40 @@
-.anchor
-.DS_Store
-target
+# Node.js / NPM
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+pnpm-lock.yaml
+
+# Rust / Cargo
+target/
+**/target/
 **/*.rs.bk
-node_modules
-test-ledger
-.yarn
+Cargo.lock
+
+# Anchor
+/.anchor/
+/keys/
+/programs/**/target/
+/tests/.test-ledger/
+/test-ledger/
+
+# Solana wallet keys
+*.json
+*.key
+
+# React / frontend
+build/
+dist/
+.cache/
+*.log
+*.env
+*.env.*
+
+# VSCode / JetBrains
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
