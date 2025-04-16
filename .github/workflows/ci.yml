@@ -19,6 +19,9 @@ jobs:
 
       - name: Install NPM dependencies
         run: npm install && npm install @project-serum/anchor @solana/web3.js
+      
+      - name: Add Solana to env path 
+        run: export PATH=~/.local/share/solana/install/active_release/bin:$PATH
 
       - name: Build Anchor project
         run: anchor build
