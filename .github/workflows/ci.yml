@@ -17,11 +17,22 @@ jobs:
         run: |
           curl --proto '=https' --tlsv1.2 -sSfL https://solana-install.solana.workers.dev | bash
 
+      - name: Install Rust and Anchor CLI
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSfL https://sh.rustup.rs | bash
+          source $HOME/.cargo/env
+          cargo install --git https://github.com/project-serum/anchor anchor-cli --locked
+
       - name: Install NPM dependencies
-        run: npm install && npm install @project-serum/anchor @solana/web3.js
-      
-      - name: Add Solana to env path 
-        run: export PATH=~/.local/share/solana/install/active_release/bin:$PATH
+        run: |
+          npm install
+          npm install @project-serum/anchor @solana/web3.js
 
       - name: Build Anchor project
-        run: anchor build
+        run: |
+          source $HOME/.cargo/env
+          anchor build
+
+      - name: Run tests
+        run: |
+          anchor test
