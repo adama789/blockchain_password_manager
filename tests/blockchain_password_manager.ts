@@ -1,12 +1,12 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import { Myproject } from "../target/types/blockchain_password_manager";
+import { BlockchainPasswordManager } from "../target/types/blockchain_password_manager";
 
-describe("myproject", () => {
+describe("blockchain_password_manager", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
-  const program = anchor.workspace.myproject as Program<Myproject>;
+  const program = anchor.workspace.BlockchainPasswordManager as Program<BlockchainPasswordManager>;
 
   it("Initializes an account with a value", async () => {
     const account = anchor.web3.Keypair.generate();
