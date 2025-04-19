@@ -25,19 +25,23 @@ A decentralized password manager built on the Solana blockchain using the Anchor
 
    `git clone https://github.com/adama789/blockchain_password_manager.git && cd blockchain_password_manager`
 
-3. Install Node.js dependencies:
+3. Install Node.js dependencies for backend:
 
-   `npm install && npm install @project-serum/anchor @solana/web3.js`
+   `npm install`
+   
+5. Install Node.js dependencies for frontend:
 
+   `cd frontend/blockchain_password_manager && npm install`
+   
 ---
 
 ## ⚙️ Configuration
 
-4. Generate a new wallet:
+5. Generate a new wallet:
 
    `solana-keygen new`
 
-5. Configure network:
+6. Configure network:
 
    To work on devnet:
 
@@ -65,7 +69,7 @@ A decentralized password manager built on the Solana blockchain using the Anchor
      cluster = "localnet"
      ```
 
-6. Check your current Solana config:
+7. Check your current Solana config:
 
    `solana config get`
 
