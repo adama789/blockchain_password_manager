@@ -8,22 +8,44 @@ describe("blockchain_password_manager", () => {
 
   const program = anchor.workspace.BlockchainPasswordManager as Program<BlockchainPasswordManager>;
 
+  let vaultAccount: anchor.web3.Keypair;
+
   it("Initializes an account with a value", async () => {
-    const account = anchor.web3.Keypair.generate();
+    vaultAccount = anchor.web3.Keypair.generate();
 
     const tx = await program.methods
-      .initialize()
+      .initializeVault()
       .accounts({
-        initialAccount: account.publicKey,
+        vault: vaultAccount.publicKey,
         user: provider.wallet.publicKey,
         // systemProgram: anchor.web3.SystemProgram.programId,
       })
-      .signers([account])
+      .signers([vaultAccount])
       .rpc();
 
     console.log("Your transaction signature", tx);
 
-    const fetchedValue = await program.account.init.fetch(account.publicKey);
-    console.log("Fetched value:", fetchedValue.value.toString());
+    const fetchedVault = await program.account.passwordVault.fetch(vaultAccount.publicKey);
+    console.log("Fetched owner:", fetchedVault.owner.toBase58());
+    console.log("Fetched entries:", fetchedVault.entries);
+  });
+  
+  it("Adds an entry to the vault", async () => {
+    const title = "My Email";
+    const username = "me@example.com";
+    const password = "supersecretpassword";
+
+    const tx = await program.methods
+      .addEntry(title, username, password)
+      .accounts({
+        vault: vaultAccount.publicKey,
+        user: provider.wallet.publicKey,
+      })
+      .rpc();
+
+    console.log("Entry added, tx:", tx);
+
+    const vault = await program.account.passwordVault.fetch(vaultAccount.publicKey);
+    console.log("Vault entries:", vault.entries);
   });
 });
