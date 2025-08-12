@@ -1,12 +1,12 @@
 use anchor_lang::prelude::*;
 
-declare_id!("7enf5P2posUM9L6naaakrzk4DAXrSs2d5McYWjvNNPho");
+declare_id!("6tmvkvYYeNmHmqXzSmZ6Aq8qG3PdH6pncPiCPzfsSFkM");
 
 #[program]
 pub mod blockchain_password_manager {
     use super::*;
 
-    pub fn initialize_vault(ctx: Context<InitializeVault>) -> Result<()> {
+    pub fn initialize_vault(ctx: Context<InitializeVault>, _bump: u8) -> Result<()> {
         let vault = &mut ctx.accounts.vault;
         vault.owner = ctx.accounts.user.key();
         vault.entries = Vec::new();
@@ -36,9 +36,17 @@ pub mod blockchain_password_manager {
 }
 
 #[derive(Accounts)]
+#[instruction(bump: u8)]
 pub struct InitializeVault<'info> {
-    #[account(init, payer = user, space = PasswordVault::MAX_SIZE)]
+    #[account(
+        init,
+        payer = user,
+        space = PasswordVault::MAX_SIZE,
+        seeds = [b"vault", user.key().as_ref()],
+        bump
+    )]
     pub vault: Account<'info, PasswordVault>,
+
     #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -46,7 +54,7 @@ pub struct InitializeVault<'info> {
 
 #[derive(Accounts)]
 pub struct AddEntry<'info> {
-    #[account(mut)]
+    #[account(mut, seeds = [b"vault", user.key().as_ref()], bump)]
     pub vault: Account<'info, PasswordVault>,
     pub user: Signer<'info>,
 }
@@ -72,11 +80,10 @@ pub enum CustomError {
 
 impl PasswordVault {
     const MAX_ENTRIES: usize = 5;
-    const MAX_ENTRY_SIZE: usize = 4 + 32 + 4 + 32 + 4 + 64; 
-    // 4 per string, title (32), username (32), password (64)
+    const MAX_ENTRY_SIZE: usize = 4 + 32 + 4 + 32 + 4 + 64;
 
     pub const MAX_SIZE: usize = 8  // discriminator
-        + 32 // owner Pubkey
-        + 4 // vector size
+        + 32 // owner
+        + 4  // vector len
         + Self::MAX_ENTRIES * Self::MAX_ENTRY_SIZE;
 }

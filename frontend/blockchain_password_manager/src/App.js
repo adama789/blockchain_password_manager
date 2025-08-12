@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
-import { Connection, PublicKey } from '@solana/web3.js';
-import { Program, AnchorProvider, web3, utils, BN } from '@project-serum/anchor';
-import idl from './blockchain_password_manager.json'; // IDL wygenerowany przez Anchor
-import './App.css';
+import React, { useState } from "react";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { Program, AnchorProvider, web3, utils } from "@coral-xyz/anchor";
+import idl from "./blockchain_password_manager.json";
+import "./App.css";
 
 const programID = new PublicKey(idl.address);
-const network = "http://127.0.0.1:8899"; // solana-test-validator
-const opts = { preflightCommitment: "processed" };
+const network = "http://127.0.0.1:8899";
+const opts = {
+  preflightCommitment: "confirmed",
+  commitment: "confirmed",
+};
 
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
@@ -15,39 +18,64 @@ function App() {
   const [password, setPassword] = useState("");
   const [entries, setEntries] = useState([]);
   const [vaultPda, setVaultPda] = useState(null);
+  const [vaultBump, setVaultBump] = useState(null);
 
-  const getProvider = () => {
-    const connection = new Connection(network, opts.preflightCommitment);
-    const provider = new AnchorProvider(connection, window.solana, opts);
-    return provider;
-  };
+
+  // helper: bytes -> string
+  const bytesToString = (arr) =>
+    new TextDecoder().decode(Uint8Array.from(arr)).replace(/\0/g, "");
 
   const connectWallet = async () => {
-    if (window.solana) {
-      const res = await window.solana.connect();
-      setWalletAddress(res.publicKey.toString());
-    } else {
-      alert("Wallet not found! Get Phantom Wallet!");
+    try {
+      if (window.solana && window.solana.isPhantom) {
+        const resp = await window.solana.connect();
+        setWalletAddress(resp.publicKey.toString());
+
+        const [vault, bump] = PublicKey.findProgramAddressSync(
+          [utils.bytes.utf8.encode("vault"), resp.publicKey.toBuffer()],
+          programID
+        );
+        
+        setVaultPda(vault);
+        setVaultBump(bump);
+      } else {
+        alert("Phantom Wallet not found! Install from https://phantom.app/");
+      }
+    } catch (err) {
+      console.error("Wallet connect error:", err);
+      alert(err.message);
     }
   };
 
+  const getProvider = () => {
+    const connection = new Connection(network, opts.preflightCommitment);
+    return new AnchorProvider(connection, window.solana, opts);
+  };
+
   const initializeVault = async () => {
-    const provider = getProvider();
-    const program = new Program(idl, programID, provider);
+    if (!walletAddress) {
+      alert("Connect wallet first!");
+      return;
+    }
+    try {
+      const provider = getProvider();
+      
+      const program = new Program(idl, programID, provider);
+      const tx = await program.methods
+        .initializeVault(vaultBump)
+        .accounts({
+          vault: vaultPda,
+          user: provider.wallet.publicKey,
+          systemProgram: web3.SystemProgram.programId,
+        })
+        .rpc();
 
-    const [vault] = await PublicKey.findProgramAddressSync (
-      [utils.bytes.utf8.encode("vault"), provider.wallet.publicKey.toBuffer()],
-      program.programId
-    );
-
-    await program.methods.initializeVault().accounts({
-      vault,
-      user: provider.wallet.publicKey,
-      systemProgram: web3.SystemProgram.programId,
-    }).rpc();
-
-    setVaultPda(vault);
-    alert("Vault initialized: " + vault.toString());
+      console.log("TX:", tx);
+      alert("✅ Vault initialized!");
+    } catch (err) {
+      console.error(err);
+      alert("❌ " + err.message);
+    }
   };
 
   const addEntry = async () => {
@@ -55,19 +83,26 @@ function App() {
       alert("Vault not initialized yet!");
       return;
     }
+    try {
+      const provider = getProvider();
+      const program = new Program(idl, programID, provider);
 
-    const provider = getProvider();
-    const program = new Program(idl, programID, provider);
+      await program.methods
+        .addEntry(title, username, password)
+        .accounts({
+          vault: vaultPda,
+          user: provider.wallet.publicKey,
+        })
+        .rpc();
 
-    await program.methods
-      .addEntry(title, username, password)
-      .accounts({
-        vault: vaultPda,
-        user: provider.wallet.publicKey
-      })
-      .rpc();
-
-    alert("Entry added!");
+      alert("Entry added!");
+      setTitle("");
+      setUsername("");
+      setPassword("");
+    } catch (err) {
+      console.error(err);
+      alert("Failed: " + err.message);
+    }
   };
 
   const fetchEntries = async () => {
@@ -75,25 +110,25 @@ function App() {
       alert("Vault not initialized yet!");
       return;
     }
+    try {
+      const provider = getProvider();
+      const program = new Program(idl, programID, provider);
 
-    const provider = getProvider();
-    const program = new Program(idl, programID, provider);
-
-    const vaultAccount = await program.account.passwordVault.fetch(vaultPda);
-    setEntries(vaultAccount.entries);
+      const vaultAccount = await program.account.passwordVault.fetch(vaultPda);
+      setEntries(vaultAccount.entries);
+    } catch (err) {
+      console.error(err);
+      alert("Fetch failed: " + err.message);
+    }
   };
 
   return (
     <div className="App">
       <header className="App-header">
-        {!walletAddress && (
-          <button className="btn" onClick={connectWallet}>
-            Connect Wallet
-          </button>
-        )}
-
-        {walletAddress && (
-          <div>
+        {!walletAddress ? (
+          <button onClick={connectWallet}>Connect Wallet</button>
+        ) : (
+          <>
             <p>Connected: {walletAddress}</p>
             <button onClick={initializeVault}>Initialize Vault</button>
 
@@ -121,12 +156,12 @@ function App() {
               <ul>
                 {entries.map((e, i) => (
                   <li key={i}>
-                    <b>{e.title}</b> - {e.username} / {e.password}
+                    <b>{e.title}</b> — {e.username} / {e.password}
                   </li>
                 ))}
               </ul>
             </div>
-          </div>
+          </>
         )}
       </header>
     </div>
