@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { Program, AnchorProvider, web3, utils } from "@coral-xyz/anchor";
 import idl from "./blockchain_password_manager.json";
+import { Buffer } from "buffer";
 import "./App.css";
 
 const programID = new PublicKey(idl.address);
@@ -10,6 +11,8 @@ const opts = {
   preflightCommitment: "confirmed",
   commitment: "confirmed",
 };
+
+window.Buffer = Buffer;
 
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
