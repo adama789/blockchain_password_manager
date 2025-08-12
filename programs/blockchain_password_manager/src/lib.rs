@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 
-declare_id!("6tmvkvYYeNmHmqXzSmZ6Aq8qG3PdH6pncPiCPzfsSFkM");
+// Ensure this matches the address in your Anchor.toml
+declare_id!("CTv8dZywAUsET57jugsCP8pUnxYHXQCcCG5ktj4eLm3L");
 
 #[program]
 pub mod blockchain_password_manager {
@@ -79,11 +80,16 @@ pub enum CustomError {
 }
 
 impl PasswordVault {
+    // Define the maximum sizes for the account
     const MAX_ENTRIES: usize = 5;
-    const MAX_ENTRY_SIZE: usize = 4 + 32 + 4 + 32 + 4 + 64;
+    const MAX_TITLE_LENGTH: usize = 32;
+    const MAX_USERNAME_LENGTH: usize = 32;
+    const MAX_PASSWORD_LENGTH: usize = 64;
+    // Length of a string is 4 bytes + the string itself.
+    const MAX_ENTRY_SIZE: usize = 4 + Self::MAX_TITLE_LENGTH + 4 + Self::MAX_USERNAME_LENGTH + 4 + Self::MAX_PASSWORD_LENGTH;
 
-    pub const MAX_SIZE: usize = 8  // discriminator
-        + 32 // owner
-        + 4  // vector len
+    pub const MAX_SIZE: usize = 8 // Anchor account discriminator
+        + 32 // owner: Pubkey
+        + 4  // entries: Vec<PasswordEntry> - vector length prefix
         + Self::MAX_ENTRIES * Self::MAX_ENTRY_SIZE;
 }

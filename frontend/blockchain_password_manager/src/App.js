@@ -21,10 +21,6 @@ function App() {
   const [vaultBump, setVaultBump] = useState(null);
 
 
-  // helper: bytes -> string
-  const bytesToString = (arr) =>
-    new TextDecoder().decode(Uint8Array.from(arr)).replace(/\0/g, "");
-
   const connectWallet = async () => {
     try {
       if (window.solana && window.solana.isPhantom) {
@@ -35,7 +31,6 @@ function App() {
           [utils.bytes.utf8.encode("vault"), resp.publicKey.toBuffer()],
           programID
         );
-        
         setVaultPda(vault);
         setVaultBump(bump);
       } else {
@@ -59,8 +54,9 @@ function App() {
     }
     try {
       const provider = getProvider();
-      
-      const program = new Program(idl, programID, provider);
+
+      const program = new Program(idl, provider);
+
       const tx = await program.methods
         .initializeVault(vaultBump)
         .accounts({
@@ -70,7 +66,6 @@ function App() {
         })
         .rpc();
 
-      console.log("TX:", tx);
       alert("✅ Vault initialized!");
     } catch (err) {
       console.error(err);
