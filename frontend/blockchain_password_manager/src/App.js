@@ -80,7 +80,7 @@ function App() {
     }
     try {
       const provider = getProvider();
-      const program = new Program(idl, programID, provider);
+      const program = new Program(idl, provider);
 
       await program.methods
         .addEntry(title, username, password)
@@ -107,7 +107,7 @@ function App() {
     }
     try {
       const provider = getProvider();
-      const program = new Program(idl, programID, provider);
+      const program = new Program(idl, provider);
 
       const vaultAccount = await program.account.passwordVault.fetch(vaultPda);
       setEntries(vaultAccount.entries);
