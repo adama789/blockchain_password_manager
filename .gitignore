@@ -20,8 +20,9 @@ Cargo.lock
 /test-ledger/
 
 # Solana wallet keys
-*.json
+keys/*.json
 *.key
+/frontend/blockchain_password_manager/test-ledger/*.json
 
 # React / frontend
 build/
