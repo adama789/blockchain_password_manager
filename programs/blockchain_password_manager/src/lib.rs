@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use sha2::{Sha256, Digest};
 
 // Ensure this matches the address in your Anchor.toml
 declare_id!("CTv8dZywAUsET57jugsCP8pUnxYHXQCcCG5ktj4eLm3L");
@@ -7,10 +8,15 @@ declare_id!("CTv8dZywAUsET57jugsCP8pUnxYHXQCcCG5ktj4eLm3L");
 pub mod blockchain_password_manager {
     use super::*;
 
-    pub fn initialize_vault(ctx: Context<InitializeVault>, _bump: u8) -> Result<()> {
+    pub fn initialize_vault(ctx: Context<InitializeVault>, _bump: u8, master_password: String) -> Result<()> {
         let vault = &mut ctx.accounts.vault;
         vault.owner = ctx.accounts.user.key();
         vault.entries = Vec::new();
+
+        let mut hasher = Sha256::new();
+        hasher.update(master_password.as_bytes());
+        vault.master_hash = hasher.finalize().into();
+
         Ok(())
     }
 
@@ -21,7 +27,6 @@ pub mod blockchain_password_manager {
         password: String,
     ) -> Result<()> {
         let vault = &mut ctx.accounts.vault;
-
         require_keys_eq!(vault.owner, ctx.accounts.user.key(), CustomError::Unauthorized);
 
         let entry = PasswordEntry {
@@ -29,7 +34,6 @@ pub mod blockchain_password_manager {
             username,
             password,
         };
-
         vault.entries.push(entry);
 
         Ok(())
@@ -63,6 +67,7 @@ pub struct AddEntry<'info> {
 #[account]
 pub struct PasswordVault {
     pub owner: Pubkey,
+    pub master_hash: [u8; 32],
     pub entries: Vec<PasswordEntry>,
 }
 
@@ -80,16 +85,20 @@ pub enum CustomError {
 }
 
 impl PasswordVault {
-    // Define the maximum sizes for the account
     const MAX_ENTRIES: usize = 5;
     const MAX_TITLE_LENGTH: usize = 32;
     const MAX_USERNAME_LENGTH: usize = 32;
     const MAX_PASSWORD_LENGTH: usize = 64;
-    // Length of a string is 4 bytes + the string itself.
-    const MAX_ENTRY_SIZE: usize = 4 + Self::MAX_TITLE_LENGTH + 4 + Self::MAX_USERNAME_LENGTH + 4 + Self::MAX_PASSWORD_LENGTH;
 
-    pub const MAX_SIZE: usize = 8 // Anchor account discriminator
-        + 32 // owner: Pubkey
-        + 4  // entries: Vec<PasswordEntry> - vector length prefix
+    // Każdy string: 4 bajty na długość + treść
+    const MAX_ENTRY_SIZE: usize =
+        4 + Self::MAX_TITLE_LENGTH +   // title
+        4 + Self::MAX_USERNAME_LENGTH +// username
+        4 + Self::MAX_PASSWORD_LENGTH; // password
+
+    pub const MAX_SIZE: usize = 8   // discriminator
+        + 32                        // owner
+        + 32                        // master_hash
+        + 4                         // Vec<PasswordEntry> prefix
         + Self::MAX_ENTRIES * Self::MAX_ENTRY_SIZE;
 }

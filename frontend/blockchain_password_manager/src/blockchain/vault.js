@@ -10,12 +10,19 @@ export const getVaultPda = (wallet) =>
     programID
   );
 
-export const initializeVault = async (vaultPda, vaultBump) => {
+export const vaultExists = async (vaultPda) => {
+  const provider = getProvider();
+  const program = new Program(idl, provider);
+  const vaultAccount = await program.account.passwordVault.fetchNullable(vaultPda);
+  return vaultAccount !== null;
+};
+
+export const initializeVault = async (vaultPda, vaultBump, masterPassword) => {
   const provider = getProvider();
   const program = new Program(idl, provider);
 
   return program.methods
-    .initializeVault(vaultBump)
+    .initializeVault(vaultBump, masterPassword)
     .accounts({
       vault: vaultPda,
       user: provider.wallet.publicKey,
@@ -42,4 +49,11 @@ export const fetchEntries = async (vaultPda) => {
   const program = new Program(idl, provider);
   const vaultAccount = await program.account.passwordVault.fetch(vaultPda);
   return vaultAccount.entries;
+};
+
+export const fetchVaultHash = async (vaultPda) => {
+  const provider = getProvider();
+  const program = new Program(idl, provider);
+  const vaultAccount = await program.account.passwordVault.fetch(vaultPda);
+  return vaultAccount.masterHash;
 };
