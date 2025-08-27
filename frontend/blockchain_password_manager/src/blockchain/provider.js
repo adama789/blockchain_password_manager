@@ -12,6 +12,7 @@ export const connectWallet = async () => {
     const resp = await window.solana.connect();
     return resp.publicKey.toString();
   } else {
-    throw new Error("Phantom Wallet not found");
+    window.open("https://phantom.app/", "_blank");
+    return;
   }
 };
