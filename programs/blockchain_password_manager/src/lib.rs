@@ -90,11 +90,10 @@ impl PasswordVault {
     const MAX_USERNAME_LENGTH: usize = 32;
     const MAX_PASSWORD_LENGTH: usize = 64;
 
-    // Każdy string: 4 bajty na długość + treść
     const MAX_ENTRY_SIZE: usize =
-        4 + Self::MAX_TITLE_LENGTH +   // title
-        4 + Self::MAX_USERNAME_LENGTH +// username
-        4 + Self::MAX_PASSWORD_LENGTH; // password
+        4 + Self::MAX_TITLE_LENGTH +
+        4 + Self::MAX_USERNAME_LENGTH +
+        4 + Self::MAX_PASSWORD_LENGTH;
 
     pub const MAX_SIZE: usize = 8   // discriminator
         + 32                        // owner

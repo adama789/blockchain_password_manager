@@ -45,7 +45,10 @@ function Vault() {
   }, []);
 
   const handleInitializeVault = async () => {
-    if (!masterPassword) return alert("Set a master password!");
+    if (!masterPassword) {
+        return alert("Set a master password!");
+    }
+    
     await initializeVault(vaultPda, vaultBump, masterPassword);
     setVaultInitialized(true);
     setMasterVerified(true);

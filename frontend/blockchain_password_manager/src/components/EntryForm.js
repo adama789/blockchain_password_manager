@@ -7,7 +7,7 @@ function EntryForm({ onAdd }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAdd(title, username, password); // wysyłamy dane do Vault.js
+    onAdd(title, username, password);
     setTitle("");
     setUsername("");
     setPassword("");
