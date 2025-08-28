@@ -85,7 +85,7 @@ pub enum CustomError {
 }
 
 impl PasswordVault {
-    const MAX_ENTRIES: usize = 5;
+    const MAX_ENTRIES: usize = 15;
     const MAX_TITLE_LENGTH: usize = 32;
     const MAX_USERNAME_LENGTH: usize = 32;
     const MAX_PASSWORD_LENGTH: usize = 64;

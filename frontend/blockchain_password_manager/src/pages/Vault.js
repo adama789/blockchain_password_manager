@@ -10,6 +10,7 @@ import {
 import EntryForm from "../components/EntryForm";
 import CryptoJS from "crypto-js";
 import { Navigate } from "react-router-dom";
+import { handleError } from "../utils/vaultErrors";
 
 function Vault() {
   const [walletAddress, setWalletAddress] = useState(null);
@@ -46,27 +47,16 @@ function Vault() {
 
   const handleInitializeVault = async () => {
     if (!masterPassword) {
-        return alert("Set a master password!");
+      return alert("Set a master password!");
     }
-    
-    await initializeVault(vaultPda, vaultBump, masterPassword);
-    setVaultInitialized(true);
-    setMasterVerified(true);
-    alert("Vault initialized!");
-  };
 
-  const verifyMasterPassword = async () => {
-    const storedHashArray = await fetchVaultHash(vaultPda);
-    const storedHashHex = Array.from(storedHashArray)
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-
-    const hashHex = CryptoJS.SHA256(masterPassword).toString();
-    if (hashHex === storedHashHex) {
+    try {
+      await initializeVault(vaultPda, vaultBump, masterPassword);
+      setVaultInitialized(true);
       setMasterVerified(true);
-      alert("Master password correct!");
-    } else {
-      alert("Incorrect master password!");
+      alert("Vault initialized!");
+    } catch (error) {
+      handleError(error, "Vault initialization");
     }
   };
 
@@ -75,18 +65,54 @@ function Vault() {
     const encryptedUsername = CryptoJS.AES.encrypt(username, masterPassword).toString();
     const encryptedPassword = CryptoJS.AES.encrypt(password, masterPassword).toString();
 
-    await addEntry(vaultPda, encryptedTitle, encryptedUsername, encryptedPassword);
-    await handleFetchEntries();
+    try {
+      await addEntry(vaultPda, encryptedTitle, encryptedUsername, encryptedPassword);
+      alert("Entry added!");
+    } catch (error) {
+      handleError(error, "Add entry");
+    }
+  };
+
+  const verifyMasterPassword = async () => {
+    try {
+      const storedHashArray = await fetchVaultHash(vaultPda);
+      if (!storedHashArray) {
+        return alert("Vault not found. Please initialize it first.");
+      }
+
+      const storedHashHex = Array.from(storedHashArray)
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+
+      const hashHex = CryptoJS.SHA256(masterPassword).toString();
+      if (hashHex === storedHashHex) {
+        setMasterVerified(true);
+        alert("Master password correct!");
+      } else {
+        alert("Incorrect master password!");
+      }
+    } catch (error) {
+      handleError(error, "Verify master password");
+    }
   };
 
   const handleFetchEntries = async () => {
-    const rawEntries = await fetchEntries(vaultPda);
-    const decrypted = rawEntries.map((entry) => ({
-      title: CryptoJS.AES.decrypt(entry.title, masterPassword).toString(CryptoJS.enc.Utf8),
-      username: CryptoJS.AES.decrypt(entry.username, masterPassword).toString(CryptoJS.enc.Utf8),
-      password: CryptoJS.AES.decrypt(entry.password, masterPassword).toString(CryptoJS.enc.Utf8),
-    }));
-    setEntries(decrypted);
+    try {
+      const rawEntries = await fetchEntries(vaultPda);
+      if (!rawEntries || rawEntries.length === 0) {
+        return alert("No entries found in the vault.");
+      }
+
+      const decrypted = rawEntries.map((entry) => ({
+        title: CryptoJS.AES.decrypt(entry.title, masterPassword).toString(CryptoJS.enc.Utf8),
+        username: CryptoJS.AES.decrypt(entry.username, masterPassword).toString(CryptoJS.enc.Utf8),
+        password: CryptoJS.AES.decrypt(entry.password, masterPassword).toString(CryptoJS.enc.Utf8),
+      }));
+
+      setEntries(decrypted);
+    } catch (error) {
+      handleError(error, "Fetch entries");
+    }
   };
 
   if (loading) return <p>Loading...</p>;
