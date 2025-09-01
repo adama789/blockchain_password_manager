@@ -9,8 +9,6 @@ export const handleError = (error, context = "Transaction") => {
     alert("Not enough SOL in wallet. Please top up your balance.");
   } else if (msg.includes("already in use")) {
     alert("Vault already exists for this wallet.");
-  } else if (msg.includes("AccountDidNotSerialize")) {
-    alert("Vault data corrupted. Try resetting the vault on localnet.");
   } else {
     alert(`${context} failed: ${msg}`);
   }
