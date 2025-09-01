@@ -21,10 +21,8 @@ function LandingPage() {
   }
 
   return (
-    <div
-      className="relative w-full h-screen overflow-hidden text-white font-sans"
-    >
-      <div className="absolute inset-0 z-0">
+    <div className="relative w-full h-screen overflow-hidden text-white font-sans bg-[#060010]">
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <Particles
           particleColors={["#14F195", "#9945FF", "#00FFA3"]}
           particleCount={120}
@@ -58,7 +56,7 @@ function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={handleConnect}
-              className="px-8 py-3 rounded-full bg-gradient-to-r from-[#14F195] to-[#9945FF] text-black font-semibold shadow-lg hover:scale-105 hover:opacity-90 transition-transform duration-200"
+              className="px-8 py-3 rounded-full bg-gradient-to-r from-[#14F195] to-[#9945FF] text-white font-semibold shadow-lg hover:scale-105 hover:opacity-90 transition-transform duration-200"
             >
               Connect Wallet
             </button>
