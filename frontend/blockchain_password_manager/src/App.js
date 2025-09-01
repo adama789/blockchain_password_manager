@@ -1,15 +1,12 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Home from "./pages/Home";
+import LandingPage from "./pages/LandingPage";
 import Vault from "./pages/Vault";
 
 function App() {
   return (
     <Router>
-      <nav>
-        <Link to="/">Home</Link> | <Link to="/vault">Vault</Link>
-      </nav>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/vault" element={<Vault />} />
       </Routes>
     </Router>
