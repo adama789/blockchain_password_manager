@@ -17,7 +17,7 @@ function LandingPage() {
   };
 
   if (walletAddress) {
-    return <Navigate to="/vault" replace />;
+    return <Navigate to="/vault" />;
   }
 
   return (
@@ -61,7 +61,7 @@ function LandingPage() {
               Connect Wallet
             </button>
             <button
-              onClick={() => navigate("/about")}
+              onClick={() => window.open("https://solana.com/docs", "_blank")}
               className="px-8 py-3 rounded-full bg-white/10 text-white font-semibold border border-white/20 hover:bg-white/20 hover:scale-105 transition-transform duration-200"
             >
               Learn More
