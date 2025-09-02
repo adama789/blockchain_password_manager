@@ -7,6 +7,12 @@ html, body, #root {
   background-color: #060010;
 }
 
+@layer base {
+  ::selection {
+    @apply bg-primary text-dark;
+  }
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
