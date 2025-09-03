@@ -3,8 +3,7 @@
 @tailwind utilities;
 
 html, body, #root {
-  height: 100%;
-  background-color: #060010;
+  @apply h-full bg-dark;
 }
 
 @layer base {

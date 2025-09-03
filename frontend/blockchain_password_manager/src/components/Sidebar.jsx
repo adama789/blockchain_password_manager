@@ -12,10 +12,10 @@ function Sidebar() {
   const location = useLocation();
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-64 bg-[#060010] border-r border-white/10 flex flex-col">
+    <aside className="fixed top-0 left-0 h-screen w-64 bg-light border-r border-white/10 flex flex-col z-50">
       {/* Logo */}
       <div className="h-16 flex items-center justify-center border-b border-white/10">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-[#14F195] via-[#00FFA3] to-[#9945FF] text-transparent bg-clip-text">
+        <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text">
           SolanaVault
         </h1>
       </div>
@@ -31,7 +31,7 @@ function Sidebar() {
               className={`flex items-center gap-3 px-4 py-2 rounded-lg font-medium transition
                 ${
                   isActive
-                    ? "bg-gradient-to-r from-[#14F195] via-[#00FFA3] to-[#9945FF] text-black"
+                    ? "bg-gradient-to-r from-primary to-accent text-white shadow-glow"
                     : "text-white/70 hover:text-white hover:bg-white/5"
                 }`}
             >

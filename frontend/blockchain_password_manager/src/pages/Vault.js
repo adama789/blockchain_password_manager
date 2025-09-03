@@ -149,6 +149,7 @@ function Vault() {
 
       {vaultInitialized && masterVerified && (
         <>
+        
           <EntryForm onAdd={handleAddEntry} />
           <button onClick={handleFetchEntries}>Load Entries</button>
 

@@ -21,7 +21,7 @@ function LandingPage() {
   }
 
   return (
-    <div className="relative w-full h-screen overflow-hidden text-white font-sans bg-[#060010]">
+    <div className="relative w-full h-screen overflow-hidden text-white font-sans bg-dark">
       <ParticlesBackground />
       <HeroSection onConnect={handleConnect} />
     </div>
