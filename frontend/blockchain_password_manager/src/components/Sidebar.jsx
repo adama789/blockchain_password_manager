@@ -12,7 +12,7 @@ function Sidebar() {
   const location = useLocation();
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-64 bg-light border-r border-white/10 flex flex-col z-50">
+    <aside className="top-0 left-0 h-screen w-64 bg-light border-r border-white/10 flex flex-col z-50">
       {/* Logo */}
       <div className="h-16 flex items-center justify-center border-b border-white/10">
         <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text">

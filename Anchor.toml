@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-blockchain_password_manager = "CTv8dZywAUsET57jugsCP8pUnxYHXQCcCG5ktj4eLm3L"
+blockchain_password_manager = "F6cnixjhJMuAN1fMy1CBZes9sPUa2JjzkgWbrb6KKpFF"
 
 [registry]
 url = "https://api.apr.dev"
