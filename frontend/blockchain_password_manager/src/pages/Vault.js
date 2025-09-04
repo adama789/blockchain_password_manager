@@ -169,7 +169,7 @@ function Vault() {
               {entries.map((e, i) => (
                 <div
                   key={i}
-                  className="bg-white/5 backdrop-blur-lg border border-secondary/30 rounded-2xl p-6 shadow-md hover:shadow-[0_0_25px_rgba(236,72,153,0.4)] hover:scale-[1.02] transition transform"
+                  className="bg-white/5 backdrop-blur-lg border border-secondary/30 rounded-2xl p-6 shadow-md hover:shadow-glow hover:scale-[1.02] transition transform"
                 >
                   <h3 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-accent to-primary mb-3">
                     {e.title}

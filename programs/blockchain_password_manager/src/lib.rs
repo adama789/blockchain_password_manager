@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use sha2::{Sha256, Digest};
 
 // Ensure this matches the address in your Anchor.toml
-declare_id!("F6cnixjhJMuAN1fMy1CBZes9sPUa2JjzkgWbrb6KKpFF");
+declare_id!("CTv8dZywAUsET57jugsCP8pUnxYHXQCcCG5ktj4eLm3L");
 
 #[program]
 pub mod blockchain_password_manager {
