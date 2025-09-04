@@ -8,7 +8,7 @@ import {
   fetchEntries,
 } from "../blockchain/vault";
 import EntryForm from "../components/EntryForm";
-import Sidebar from "../components/Sidebar"; // <- sidebar
+import Sidebar from "../components/Sidebar";
 import CryptoJS from "crypto-js";
 import { Navigate } from "react-router-dom";
 import { handleError } from "../utils/vaultErrors";
