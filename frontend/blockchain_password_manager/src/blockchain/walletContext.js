@@ -23,7 +23,9 @@ export function WalletProvider({ children }) {
           console.log("No wallet connected");
         }
       }
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 400);
     };
     checkWallet();
   }, []);
