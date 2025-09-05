@@ -5,7 +5,6 @@ function Topbar({ walletAddress, onMenuClick }) {
   return (
     <header className="fixed top-0 left-0 lg:left-64 right-0 h-16 flex items-center justify-between px-6 
                        bg-light border-b border-white/10 z-40">
-      {/* Hamburger tylko na mobile */}
       <button
         className="lg:hidden p-2 rounded-md hover:bg-white/10 transition"
         onClick={onMenuClick}

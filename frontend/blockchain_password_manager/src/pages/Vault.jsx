@@ -12,6 +12,7 @@ import {
 import CryptoJS from "crypto-js";
 import { Navigate } from "react-router-dom";
 import { handleError } from "../utils/vaultErrors";
+import Loading from "../components/Loading"
 
 function Vault() {
   const [walletAddress, setWalletAddress] = useState(null);
@@ -38,7 +39,9 @@ function Vault() {
           console.log("No wallet connected");
         }
       }
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     };
     checkWallet();
   }, []);
@@ -99,7 +102,16 @@ function Vault() {
     }
   };
 
-  if (loading) return <p className="text-white text-center mt-10">Loading...</p>;
+    if (loading) {
+    return (
+      <Layout walletAddress={walletAddress}>
+        <div className="max-w-3xl mx-auto p-6">
+          <Loading message="Connecting to wallet..." />
+        </div>
+      </Layout>
+    );
+  }
+  
   if (!walletAddress) return <Navigate to="/" replace />;
 
   return (
