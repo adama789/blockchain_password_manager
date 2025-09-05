@@ -1,50 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useWallet } from "../blockchain/walletContext";
+import { Navigate } from "react-router-dom";
 import Layout from "./Layout";
 import EntryForm from "../components/EntryForm";
 import {
-  getVaultPda,
-  vaultExists,
   initializeVault,
   addEntry,
   fetchVaultHash,
   fetchEntries,
 } from "../blockchain/vault";
 import CryptoJS from "crypto-js";
-import { Navigate } from "react-router-dom";
 import { handleError } from "../utils/vaultErrors";
-import Loading from "../components/Loading"
 
 function Vault() {
-  const [walletAddress, setWalletAddress] = useState(null);
-  const [vaultPda, setVaultPda] = useState(null);
-  const [vaultBump, setVaultBump] = useState(null);
+  const { walletAddress, vaultPda, vaultBump } = useWallet();
   const [masterPassword, setMasterPassword] = useState("");
   const [vaultInitialized, setVaultInitialized] = useState(false);
   const [masterVerified, setMasterVerified] = useState(false);
   const [entries, setEntries] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkWallet = async () => {
-      if (window.solana?.isPhantom) {
-        try {
-          const resp = await window.solana.connect({ onlyIfTrusted: true });
-          setWalletAddress(resp.publicKey.toString());
-          const [vault, bump] = getVaultPda(resp.publicKey);
-          setVaultPda(vault);
-          setVaultBump(bump);
-          const exists = await vaultExists(vault);
-          setVaultInitialized(exists);
-        } catch {
-          console.log("No wallet connected");
-        }
-      }
-      setTimeout(() => {
-        setLoading(false);
-      }, 500);
-    };
-    checkWallet();
-  }, []);
 
   const handleInitializeVault = async () => {
     if (!masterPassword) return alert("Set a master password!");
@@ -102,18 +75,6 @@ function Vault() {
     }
   };
 
-    if (loading) {
-    return (
-      <Layout walletAddress={walletAddress}>
-        <div className="max-w-3xl mx-auto p-6">
-          <Loading message="Connecting to wallet..." />
-        </div>
-      </Layout>
-    );
-  }
-  
-  if (!walletAddress) return <Navigate to="/" replace />;
-
   return (
     <Layout walletAddress={walletAddress}>
       <header className="mb-12 text-center">
@@ -123,7 +84,6 @@ function Vault() {
       </header>
 
       <div className="max-w-6xl mx-auto space-y-12">
-        {/* Vault initialization */}
         {!vaultInitialized && (
           <div className="bg-white/5 backdrop-blur-xl border border-primary/30 rounded-2xl p-8 max-w-md mx-auto shadow-lg">
             <p className="mb-4 text-sm text-gray-300">
@@ -144,7 +104,6 @@ function Vault() {
           </div>
         )}
 
-        {/* Vault unlock */}
         {vaultInitialized && !masterVerified && (
           <div className="bg-white/5 backdrop-blur-xl border border-secondary/30 rounded-2xl p-8 max-w-md mx-auto shadow-lg">
             <p className="mb-4 text-sm text-gray-300">Enter master password:</p>
@@ -163,10 +122,8 @@ function Vault() {
           </div>
         )}
 
-        {/* Vault entries */}
         {vaultInitialized && masterVerified && (
           <div className="space-y-12">
-            {/* Entry form */}
             <div className="bg-white/5 backdrop-blur-xl border border-secondary/30 rounded-2xl p-8 shadow-lg">
               <EntryForm onAdd={handleAddEntry} />
               <button
@@ -177,7 +134,6 @@ function Vault() {
               </button>
             </div>
 
-            {/* Entries grid */}
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {entries.map((e, i) => (
                 <div

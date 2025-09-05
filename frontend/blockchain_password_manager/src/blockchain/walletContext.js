@@ -7,6 +7,7 @@ export function WalletProvider({ children }) {
   const [walletAddress, setWalletAddress] = useState(null);
   const [vaultPda, setVaultPda] = useState(null);
   const [vaultBump, setVaultBump] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkWallet = async () => {
@@ -22,12 +23,13 @@ export function WalletProvider({ children }) {
           console.log("No wallet connected");
         }
       }
+      setLoading(false);
     };
     checkWallet();
   }, []);
 
   return (
-    <WalletContext.Provider value={{ walletAddress, vaultPda, vaultBump }}>
+    <WalletContext.Provider value={{ walletAddress, vaultPda, vaultBump, loading }}>
       {children}
     </WalletContext.Provider>
   );
