@@ -1,8 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useWallet } from "../blockchain/walletContext";
-import { Navigate } from "react-router-dom";
-import Layout from "./Layout";
-import EntryForm from "../components/EntryForm";
 import {
   initializeVault,
   addEntry,
@@ -11,6 +8,8 @@ import {
 } from "../blockchain/vault";
 import CryptoJS from "crypto-js";
 import { handleError } from "../utils/vaultErrors";
+import Layout from "./Layout";
+import EntryForm from "../components/EntryForm";
 
 function Vault() {
   const { walletAddress, vaultPda, vaultBump } = useWallet();
@@ -18,6 +17,23 @@ function Vault() {
   const [vaultInitialized, setVaultInitialized] = useState(false);
   const [masterVerified, setMasterVerified] = useState(false);
   const [entries, setEntries] = useState([]);
+
+  useEffect(() => {
+    const checkVault = async () => {
+      if (!vaultPda) {
+        return;
+      }
+      try {
+        const storedHashArray = await fetchVaultHash(vaultPda);
+        if (storedHashArray) {
+          setVaultInitialized(true);
+        }
+      } catch {
+        console.log("No vault found yet");
+      }
+    };
+    checkVault();
+  }, [vaultPda]);
 
   const handleInitializeVault = async () => {
     if (!masterPassword) return alert("Set a master password!");
@@ -28,18 +44,6 @@ function Vault() {
       alert("Vault initialized!");
     } catch (error) {
       handleError(error, "Vault initialization");
-    }
-  };
-
-  const handleAddEntry = async (title, username, password) => {
-    const encryptedTitle = CryptoJS.AES.encrypt(title, masterPassword).toString();
-    const encryptedUsername = CryptoJS.AES.encrypt(username, masterPassword).toString();
-    const encryptedPassword = CryptoJS.AES.encrypt(password, masterPassword).toString();
-    try {
-      await addEntry(vaultPda, encryptedTitle, encryptedUsername, encryptedPassword);
-      alert("Entry added!");
-    } catch (error) {
-      handleError(error, "Add entry");
     }
   };
 
@@ -60,14 +64,33 @@ function Vault() {
     }
   };
 
+  const handleAddEntry = async (title, username, password) => {
+    const encryptedTitle = CryptoJS.AES.encrypt(title, masterPassword).toString();
+    const encryptedUsername = CryptoJS.AES.encrypt(username, masterPassword).toString();
+    const encryptedPassword = CryptoJS.AES.encrypt(password, masterPassword).toString();
+    try {
+      await addEntry(vaultPda, encryptedTitle, encryptedUsername, encryptedPassword);
+      alert("Entry added!");
+    } catch (error) {
+      handleError(error, "Add entry");
+    }
+  };
+
   const handleFetchEntries = async () => {
     try {
       const rawEntries = await fetchEntries(vaultPda);
-      if (!rawEntries || rawEntries.length === 0) return alert("No entries found in the vault.");
+      if (!rawEntries || rawEntries.length === 0)
+        return alert("No entries found in the vault.");
       const decrypted = rawEntries.map((entry) => ({
-        title: CryptoJS.AES.decrypt(entry.title, masterPassword).toString(CryptoJS.enc.Utf8),
-        username: CryptoJS.AES.decrypt(entry.username, masterPassword).toString(CryptoJS.enc.Utf8),
-        password: CryptoJS.AES.decrypt(entry.password, masterPassword).toString(CryptoJS.enc.Utf8),
+        title: CryptoJS.AES.decrypt(entry.title, masterPassword).toString(
+          CryptoJS.enc.Utf8
+        ),
+        username: CryptoJS.AES.decrypt(entry.username, masterPassword).toString(
+          CryptoJS.enc.Utf8
+        ),
+        password: CryptoJS.AES.decrypt(entry.password, masterPassword).toString(
+          CryptoJS.enc.Utf8
+        ),
       }));
       setEntries(decrypted);
     } catch (error) {

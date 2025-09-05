@@ -9,29 +9,54 @@ export function WalletProvider({ children }) {
   const [vaultBump, setVaultBump] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const connectWallet = async () => {
+    if (!window.solana) return;
+    try {
+      const resp = await window.solana.connect();
+      const pubKey = resp.publicKey;
+      handleConnect(pubKey);
+    } catch (err) {
+      console.error("User rejected connection", err);
+    }
+  };
+
+  const handleConnect = (pubKey) => {
+    if (!pubKey) return;
+    setWalletAddress(pubKey.toString());
+    const [vault, bump] = getVaultPda(pubKey);
+    setVaultPda(vault);
+    setVaultBump(bump);
+  };
+
   useEffect(() => {
-    const checkWallet = async () => {
+    const init = async () => {
       if (window.solana?.isPhantom) {
         try {
           const resp = await window.solana.connect({ onlyIfTrusted: true });
-          setWalletAddress(resp.publicKey.toString());
-          const [vault, bump] = getVaultPda(resp.publicKey);
-          setVaultPda(vault);
-          setVaultBump(bump);
-          await vaultExists(vault);
+          const pubKey = resp?.publicKey || window.solana.publicKey;
+          if (pubKey) {
+            handleConnect(pubKey);
+            await vaultExists(pubKey);
+          }
         } catch {
-          console.log("No wallet connected");
+          console.log("Wallet not connected yet");
         }
       }
       setTimeout(() => {
         setLoading(false);
       }, 400);
     };
-    checkWallet();
+
+    init();
+
+    window.solana?.on("connect", (pubKey) => handleConnect(pubKey));
+    return () => window.solana?.removeListener("connect", handleConnect);
   }, []);
 
   return (
-    <WalletContext.Provider value={{ walletAddress, vaultPda, vaultBump, loading }}>
+    <WalletContext.Provider
+      value={{ walletAddress, vaultPda, vaultBump, loading, connectWallet }}
+    >
       {children}
     </WalletContext.Provider>
   );
