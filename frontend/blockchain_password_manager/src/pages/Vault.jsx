@@ -17,19 +17,19 @@ function Vault() {
   const [vaultInitialized, setVaultInitialized] = useState(false);
   const [masterVerified, setMasterVerified] = useState(false);
   const [entries, setEntries] = useState([]);
+  const [vaultChecked, setVaultChecked] = useState(false);
 
+  // Sprawdzenie, czy vault już istnieje
   useEffect(() => {
     const checkVault = async () => {
-      if (!vaultPda) {
-        return;
-      }
+      if (!vaultPda) return;
       try {
         const storedHashArray = await fetchVaultHash(vaultPda);
-        if (storedHashArray) {
-          setVaultInitialized(true);
-        }
+        if (storedHashArray) setVaultInitialized(true);
       } catch {
         console.log("No vault found yet");
+      } finally {
+        setVaultChecked(true);
       }
     };
     checkVault();
@@ -82,21 +82,22 @@ function Vault() {
       if (!rawEntries || rawEntries.length === 0)
         return alert("No entries found in the vault.");
       const decrypted = rawEntries.map((entry) => ({
-        title: CryptoJS.AES.decrypt(entry.title, masterPassword).toString(
-          CryptoJS.enc.Utf8
-        ),
-        username: CryptoJS.AES.decrypt(entry.username, masterPassword).toString(
-          CryptoJS.enc.Utf8
-        ),
-        password: CryptoJS.AES.decrypt(entry.password, masterPassword).toString(
-          CryptoJS.enc.Utf8
-        ),
+        title: CryptoJS.AES.decrypt(entry.title, masterPassword).toString(CryptoJS.enc.Utf8),
+        username: CryptoJS.AES.decrypt(entry.username, masterPassword).toString(CryptoJS.enc.Utf8),
+        password: CryptoJS.AES.decrypt(entry.password, masterPassword).toString(CryptoJS.enc.Utf8),
       }));
       setEntries(decrypted);
     } catch (error) {
       handleError(error, "Fetch entries");
     }
   };
+
+  if (!vaultChecked) {
+    return (
+      <Layout>
+      </Layout>
+    );
+  }
 
   return (
     <Layout walletAddress={walletAddress}>
