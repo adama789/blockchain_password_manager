@@ -19,7 +19,6 @@ function Vault() {
   const [entries, setEntries] = useState([]);
   const [vaultChecked, setVaultChecked] = useState(false);
 
-  // Sprawdzenie, czy vault już istnieje
   useEffect(() => {
     const checkVault = async () => {
       if (!vaultPda) return;
