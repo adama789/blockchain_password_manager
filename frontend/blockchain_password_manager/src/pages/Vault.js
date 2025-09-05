@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import Layout from "./Layout";
+import EntryForm from "../components/EntryForm";
 import {
   getVaultPda,
   vaultExists,
@@ -7,8 +9,6 @@ import {
   fetchVaultHash,
   fetchEntries,
 } from "../blockchain/vault";
-import EntryForm from "../components/EntryForm";
-import Sidebar from "../components/Sidebar";
 import CryptoJS from "crypto-js";
 import { Navigate } from "react-router-dom";
 import { handleError } from "../utils/vaultErrors";
@@ -103,23 +103,20 @@ function Vault() {
   if (!walletAddress) return <Navigate to="/" replace />;
 
   return (
-  <div className="flex min-h-screen bg-gradient-to-b from-dark via-dark/90 to-light text-white">
-    <Sidebar />
-
-    <div className="flex-1 p-10 flex flex-col items-center">
-      <header className="w-full max-w-5xl flex items-center justify-between mb-12">
+    <Layout walletAddress={walletAddress}>
+      <header className="mb-12 text-center">
         <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-accent to-primary drop-shadow-[0_0_15px_rgba(236,72,153,0.6)]">
           Your Vault
         </h2>
-        <span className="text-sm text-gray-400">
-          Connected as <span className="text-accent">{walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}</span>
-        </span>
       </header>
 
-      <div className="w-full max-w-5xl space-y-10">
+      <div className="max-w-6xl mx-auto space-y-12">
+        {/* Vault initialization */}
         {!vaultInitialized && (
-          <div className="bg-white/5 backdrop-blur-xl border border-primary/30 rounded-2xl p-8 w-full max-w-md mx-auto shadow-lg">
-            <p className="mb-4 text-sm text-gray-300">Set master password to initialize vault:</p>
+          <div className="bg-white/5 backdrop-blur-xl border border-primary/30 rounded-2xl p-8 max-w-md mx-auto shadow-lg">
+            <p className="mb-4 text-sm text-gray-300">
+              Set master password to initialize vault:
+            </p>
             <input
               type="password"
               value={masterPassword}
@@ -135,8 +132,9 @@ function Vault() {
           </div>
         )}
 
+        {/* Vault unlock */}
         {vaultInitialized && !masterVerified && (
-          <div className="bg-white/5 backdrop-blur-xl border border-secondary/30 rounded-2xl p-8 w-full max-w-md mx-auto shadow-lg">
+          <div className="bg-white/5 backdrop-blur-xl border border-secondary/30 rounded-2xl p-8 max-w-md mx-auto shadow-lg">
             <p className="mb-4 text-sm text-gray-300">Enter master password:</p>
             <input
               type="password"
@@ -153,8 +151,10 @@ function Vault() {
           </div>
         )}
 
+        {/* Vault entries */}
         {vaultInitialized && masterVerified && (
-          <div className="space-y-10">
+          <div className="space-y-12">
+            {/* Entry form */}
             <div className="bg-white/5 backdrop-blur-xl border border-secondary/30 rounded-2xl p-8 shadow-lg">
               <EntryForm onAdd={handleAddEntry} />
               <button
@@ -165,31 +165,35 @@ function Vault() {
               </button>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Entries grid */}
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {entries.map((e, i) => (
                 <div
                   key={i}
-                  className="bg-white/5 backdrop-blur-lg border border-secondary/30 rounded-2xl p-6 shadow-md hover:shadow-glow hover:scale-[1.02] transition transform"
+                  className="bg-white/5 backdrop-blur-lg border border-secondary/30 rounded-2xl p-6 shadow-md hover:shadow-glow hover:scale-[1.02] transition transform flex flex-col justify-between"
                 >
                   <h3 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-accent to-primary mb-3">
                     {e.title}
                   </h3>
-                  <p className="text-gray-300 text-sm flex items-center gap-2">
-                    <span className="text-accent">👤</span>
-                    <span className="font-semibold text-white">Username:</span> {e.username}
-                  </p>
-                  <p className="text-gray-300 text-sm flex items-center gap-2">
-                    <span className="text-primary">🔒</span>
-                    <span className="font-semibold text-white">Password:</span> {e.password}
-                  </p>
+                  <div className="space-y-2">
+                    <p className="text-gray-300 text-sm flex items-center gap-2">
+                      <span className="text-accent">👤</span>
+                      <span className="font-semibold text-white">Username:</span>{" "}
+                      {e.username}
+                    </p>
+                    <p className="text-gray-300 text-sm flex items-center gap-2">
+                      <span className="text-primary">🔒</span>
+                      <span className="font-semibold text-white">Password:</span>{" "}
+                      {e.password}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         )}
       </div>
-    </div>
-  </div>
+    </Layout>
   );
 }
 
