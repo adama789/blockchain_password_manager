@@ -12,9 +12,9 @@ function Sidebar() {
   const location = useLocation();
 
   return (
-    <aside className="top-0 left-0 h-full w-64 bg-light border-r border-white/10 flex flex-col z-50">
+    <aside className="top-0 left-0 h-full w-64 bg-light border-r border-primary/30 flex flex-col z-50">
       {/* Logo */}
-      <div className="h-16 flex items-center justify-center border-b border-white/10">
+      <div className="h-16 flex items-center justify-center border-b border-primary/30">
         <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text">
           SolanaVault
         </h1>
@@ -43,7 +43,7 @@ function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-white/10 text-xs text-gray-400">
+      <div className="p-4 border-t border-primary/30 text-xs text-gray-400">
         © {new Date().getFullYear()} SolanaVault
       </div>
     </aside>

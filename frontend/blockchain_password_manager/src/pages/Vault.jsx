@@ -10,6 +10,8 @@ import CryptoJS from "crypto-js";
 import { handleError } from "../utils/vaultErrors";
 import Layout from "./Layout";
 import EntryForm from "../components/EntryForm";
+import { Eye, EyeOff, User, Lock } from "lucide-react";
+import SpotlightCard from "../components/ReactBits/SpotlightCard/SpotlightCard";
 
 function Vault() {
   const { walletAddress, vaultPda, vaultBump } = useWallet();
@@ -18,6 +20,7 @@ function Vault() {
   const [masterVerified, setMasterVerified] = useState(false);
   const [entries, setEntries] = useState([]);
   const [vaultChecked, setVaultChecked] = useState(false);
+  const [revealed, setRevealed] = useState({});
 
   useEffect(() => {
     const checkVault = async () => {
@@ -49,7 +52,8 @@ function Vault() {
   const verifyMasterPassword = async () => {
     try {
       const storedHashArray = await fetchVaultHash(vaultPda);
-      if (!storedHashArray) return alert("Vault not found. Please initialize it first.");
+      if (!storedHashArray)
+        return alert("Vault not found. Please initialize it first.");
       const storedHashHex = Array.from(storedHashArray)
         .map((b) => b.toString(16).padStart(2, "0"))
         .join("");
@@ -86,16 +90,18 @@ function Vault() {
         password: CryptoJS.AES.decrypt(entry.password, masterPassword).toString(CryptoJS.enc.Utf8),
       }));
       setEntries(decrypted);
+      setRevealed({});
     } catch (error) {
       handleError(error, "Fetch entries");
     }
   };
 
+  const toggleCard = (index) => {
+    setRevealed((prev) => ({ ...prev, [index]: !prev[index] }));
+  };
+
   if (!vaultChecked) {
-    return (
-      <Layout>
-      </Layout>
-    );
+    return <Layout />;
   }
 
   return (
@@ -108,7 +114,7 @@ function Vault() {
 
       <div className="max-w-6xl mx-auto space-y-12">
         {!vaultInitialized && (
-          <div className="bg-white/5 backdrop-blur-xl border border-primary/30 rounded-2xl p-8 max-w-md mx-auto shadow-lg">
+          <div className="bg-light backdrop-blur-xl border border-primary/30 rounded-2xl p-8 max-w-md mx-auto shadow-lg">
             <p className="mb-4 text-sm text-gray-300">
               Set master password to initialize vault:
             </p>
@@ -128,13 +134,13 @@ function Vault() {
         )}
 
         {vaultInitialized && !masterVerified && (
-          <div className="bg-white/5 backdrop-blur-xl border border-secondary/30 rounded-2xl p-8 max-w-md mx-auto shadow-lg">
+          <div className="bg-light backdrop-blur-xl border border-primary/30 rounded-2xl p-8 max-w-md mx-auto shadow-lg">
             <p className="mb-4 text-sm text-gray-300">Enter master password:</p>
             <input
               type="password"
               value={masterPassword}
               onChange={(e) => setMasterPassword(e.target.value)}
-              className="w-full rounded-xl bg-dark/70 border border-secondary/30 p-3 mb-4 text-white focus:outline-none focus:ring-2 focus:ring-secondary shadow-inner"
+              className="w-full rounded-xl bg-dark/70 border border-primary/30 p-3 mb-4 text-white focus:outline-none focus:ring-2 focus:ring-secondary shadow-inner"
             />
             <button
               onClick={verifyMasterPassword}
@@ -147,7 +153,7 @@ function Vault() {
 
         {vaultInitialized && masterVerified && (
           <div className="space-y-12">
-            <div className="bg-white/5 backdrop-blur-xl border border-secondary/30 rounded-2xl p-8 shadow-lg">
+            <div className="bg-light backdrop-blur-xl border border-primary/30 rounded-2xl p-8 shadow-lg">
               <EntryForm onAdd={handleAddEntry} />
               <button
                 onClick={handleFetchEntries}
@@ -158,28 +164,63 @@ function Vault() {
             </div>
 
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {entries.map((e, i) => (
-                <div
-                  key={i}
-                  className="bg-white/5 backdrop-blur-lg border border-secondary/30 rounded-2xl p-6 shadow-md hover:shadow-glow hover:scale-[1.02] transition transform flex flex-col justify-between"
-                >
-                  <h3 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-accent to-primary mb-3">
-                    {e.title}
-                  </h3>
-                  <div className="space-y-2">
-                    <p className="text-gray-300 text-sm flex items-center gap-2">
-                      <span className="text-accent">👤</span>
-                      <span className="font-semibold text-white">Username:</span>{" "}
-                      {e.username}
-                    </p>
-                    <p className="text-gray-300 text-sm flex items-center gap-2">
-                      <span className="text-primary">🔒</span>
-                      <span className="font-semibold text-white">Password:</span>{" "}
-                      {e.password}
-                    </p>
+              {entries.map((e, i) => {
+                const isRevealed = revealed[i];
+
+                return !isRevealed ? (
+                  <SpotlightCard
+                    key={i}
+                    className="relative bg-light border border-primary/30 
+                               rounded-2xl p-6 shadow-md transition transform 
+                               hover:scale-[1.02] min-h-[220px] 
+                               flex flex-col justify-center items-center"
+                    spotlightColor="rgba(168,85,247,0.6)"
+                  >
+                    <h4 className="text-xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent mb-4">
+                      {e.title}
+                    </h4>
+                    <button
+                      onClick={() => toggleCard(i)}
+                      className="p-4 rounded-full bg-gradient-to-r from-accent to-primary 
+                                 hover:shadow-glow transition transform hover:scale-110"
+                    >
+                      <Eye className="w-6 h-6 text-white" />
+                    </button>
+                  </SpotlightCard>
+                ) : (
+                  <div
+                    key={i}
+                    className="relative bg-light border border-primary/30
+                               rounded-2xl p-6 shadow-md transition transform 
+                               hover:scale-[1.02] min-h-[220px] 
+                               flex flex-col justify-between animate-fadeIn"
+                  >
+                    <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-accent to-primary">
+                      {e.title}
+                    </h3>
+                    <div className="space-y-2 text-sm mt-3">
+                      <p className="flex items-center gap-2 text-gray-200">
+                        <User className="w-4 h-4 text-primary" />
+                        <span className="font-semibold text-white">Username:</span> {e.username}
+                      </p>
+                      <p className="flex items-center gap-2 text-gray-200">
+                        <Lock className="w-4 h-4 text-accent" />
+                        <span className="font-semibold text-white">Password:</span> {e.password}
+                      </p>
+                    </div>
+                    <div className="pt-4 flex justify-end">
+                      <button
+                        onClick={() => toggleCard(i)}
+                        className="px-3 py-1 rounded-lg bg-gradient-to-r from-primary to-accent 
+                                   text-white text-xs font-medium shadow-md hover:opacity-90"
+                      >
+                        <EyeOff className="w-4 h-4 inline mr-1" />
+                        Hide
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

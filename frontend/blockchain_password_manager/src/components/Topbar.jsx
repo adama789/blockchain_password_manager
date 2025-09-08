@@ -4,7 +4,7 @@ import { Menu } from "lucide-react";
 function Topbar({ walletAddress, onMenuClick }) {
   return (
     <header className="fixed top-0 left-0 lg:left-64 right-0 h-16 flex items-center justify-between px-6 
-                       bg-light border-b border-white/10 z-40">
+                       bg-light border-b border-primary/30 z-40">
       <button
         className="lg:hidden p-2 rounded-md hover:bg-white/10 transition"
         onClick={onMenuClick}
