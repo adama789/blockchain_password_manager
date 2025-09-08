@@ -37,6 +37,27 @@ function Vault() {
     checkVault();
   }, [vaultPda]);
 
+  useEffect(() => {
+    if (masterVerified) {
+      const fetchEntriesOnUnlock = async () => {
+        try {
+          const rawEntries = await fetchEntries(vaultPda);
+          if (!rawEntries || rawEntries.length === 0) return;
+          const decrypted = rawEntries.map((entry) => ({
+            title: CryptoJS.AES.decrypt(entry.title, masterPassword).toString(CryptoJS.enc.Utf8),
+            username: CryptoJS.AES.decrypt(entry.username, masterPassword).toString(CryptoJS.enc.Utf8),
+            password: CryptoJS.AES.decrypt(entry.password, masterPassword).toString(CryptoJS.enc.Utf8),
+          }));
+          setEntries(decrypted);
+          setRevealed({});
+        } catch (error) {
+          handleError(error, "Fetch entries");
+        }
+      };
+      fetchEntriesOnUnlock();
+    }
+  }, [masterVerified, vaultPda, masterPassword]);
+
   const handleInitializeVault = async () => {
     if (!masterPassword) return alert("Set a master password!");
     try {
@@ -74,16 +95,8 @@ function Vault() {
     try {
       await addEntry(vaultPda, encryptedTitle, encryptedUsername, encryptedPassword);
       alert("Entry added!");
-    } catch (error) {
-      handleError(error, "Add entry");
-    }
-  };
-
-  const handleFetchEntries = async () => {
-    try {
       const rawEntries = await fetchEntries(vaultPda);
-      if (!rawEntries || rawEntries.length === 0)
-        return alert("No entries found in the vault.");
+      if (!rawEntries || rawEntries.length === 0) return;
       const decrypted = rawEntries.map((entry) => ({
         title: CryptoJS.AES.decrypt(entry.title, masterPassword).toString(CryptoJS.enc.Utf8),
         username: CryptoJS.AES.decrypt(entry.username, masterPassword).toString(CryptoJS.enc.Utf8),
@@ -92,7 +105,7 @@ function Vault() {
       setEntries(decrypted);
       setRevealed({});
     } catch (error) {
-      handleError(error, "Fetch entries");
+      handleError(error, "Add entry");
     }
   };
 
@@ -155,12 +168,6 @@ function Vault() {
           <div className="space-y-12">
             <div className="bg-light backdrop-blur-xl border border-primary/30 rounded-2xl p-8 shadow-lg">
               <EntryForm onAdd={handleAddEntry} />
-              <button
-                onClick={handleFetchEntries}
-                className="mt-6 w-full bg-gradient-to-r from-accent to-primary hover:opacity-90 text-white font-bold py-2 rounded-xl shadow-md transition"
-              >
-                Load Entries
-              </button>
             </div>
 
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
