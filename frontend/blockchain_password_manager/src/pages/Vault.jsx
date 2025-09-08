@@ -115,7 +115,7 @@ function Vault() {
       <div className="max-w-6xl mx-auto space-y-12">
         {!vaultInitialized && (
           <div className="bg-light backdrop-blur-xl border border-primary/30 rounded-2xl p-8 max-w-md mx-auto shadow-lg">
-            <p className="mb-4 text-sm text-gray-300">
+            <p className="mb-4 text-gray-300">
               Set master password to initialize vault:
             </p>
             <input
@@ -135,7 +135,7 @@ function Vault() {
 
         {vaultInitialized && !masterVerified && (
           <div className="bg-light backdrop-blur-xl border border-primary/30 rounded-2xl p-8 max-w-md mx-auto shadow-lg">
-            <p className="mb-4 text-sm text-gray-300">Enter master password:</p>
+            <p className="mb-4 text-gray-300">Enter master password:</p>
             <input
               type="password"
               value={masterPassword}
@@ -198,7 +198,7 @@ function Vault() {
                     <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-accent to-primary">
                       {e.title}
                     </h3>
-                    <div className="space-y-2 text-sm mt-3">
+                    <div className="space-y-2 mt-3">
                       <p className="flex items-center gap-2 text-gray-200">
                         <User className="w-4 h-4 text-primary" />
                         <span className="font-semibold text-white">Username:</span> {e.username}
