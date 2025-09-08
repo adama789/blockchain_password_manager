@@ -13,14 +13,14 @@ function Topbar({ walletAddress, onMenuClick }) {
       </button>
 
       {walletAddress ? (
-        <div className="flex items-center text-sm text-gray-400 ml-auto">
+        <div className="flex items-center text-gray-400 ml-auto">
           Connected to{" "}
           <span className="ml-2 font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
           </span>
         </div>
       ) : (
-        <div className="ml-auto text-sm text-gray-500">Not connected</div>
+        <div className="ml-auto text-gray-500">Not connected</div>
       )}
     </header>
   );

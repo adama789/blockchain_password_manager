@@ -43,7 +43,7 @@ function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-primary/30 text-xs text-gray-400">
+      <div className="p-4 border-t border-primary/30  text-gray-400">
         © {new Date().getFullYear()} SolanaVault
       </div>
     </aside>
