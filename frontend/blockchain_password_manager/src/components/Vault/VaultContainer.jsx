@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useWallet } from "../../blockchain/walletContext";
 import {
   initializeVault,
@@ -25,6 +25,7 @@ function VaultContainer() {
   const [revealed, setRevealed] = useState({});
   const [copied, setCopied] = useState(null);
   const [showPassword, setShowPassword] = useState({});
+  const copyTimeout = useRef(null);
 
   useEffect(() => {
     const checkVault = async () => {
@@ -120,7 +121,9 @@ function VaultContainer() {
   const handleCopy = (text, key) => {
     navigator.clipboard.writeText(text);
     setCopied(key);
-    setTimeout(() => setCopied(null), 2000);
+
+    if (copyTimeout.current) clearTimeout(copyTimeout.current);
+    copyTimeout.current = setTimeout(() => setCopied(null), 2000);
   };
 
   const togglePassword = (index) => {
