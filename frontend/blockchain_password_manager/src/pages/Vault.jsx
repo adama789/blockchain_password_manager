@@ -10,7 +10,7 @@ import CryptoJS from "crypto-js";
 import { handleError } from "../utils/vaultErrors";
 import Layout from "./Layout";
 import EntryForm from "../components/EntryForm";
-import { Eye, EyeOff, User, Lock } from "lucide-react";
+import { Eye, EyeOff, User, Lock, Copy } from "lucide-react";
 import SpotlightCard from "../components/ReactBits/SpotlightCard/SpotlightCard";
 
 function Vault() {
@@ -21,6 +21,8 @@ function Vault() {
   const [entries, setEntries] = useState([]);
   const [vaultChecked, setVaultChecked] = useState(false);
   const [revealed, setRevealed] = useState({});
+  const [copied, setCopied] = useState(null);
+  const [showPassword, setShowPassword] = useState({});
 
   useEffect(() => {
     const checkVault = async () => {
@@ -117,6 +119,16 @@ function Vault() {
     return <Layout />;
   }
 
+  const handleCopy = (text, key) => {
+    navigator.clipboard.writeText(text);
+    setCopied(key);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const togglePassword = (index) => {
+    setShowPassword((prev) => ({ ...prev, [index]: !prev[index] }));
+  };
+
   return (
     <Layout walletAddress={walletAddress}>
       <header className="mb-12 text-center">
@@ -183,7 +195,7 @@ function Vault() {
                                flex flex-col justify-center items-center"
                     spotlightColor="rgba(168,85,247,0.6)"
                   >
-                    <h4 className="text-xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent mb-4">
+                    <h4 className="text-xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent mb-4 max-w-[300px] truncate" title={e.title}>
                       {e.title}
                     </h4>
                     <button
@@ -202,24 +214,59 @@ function Vault() {
                                hover:scale-[1.02] min-h-[220px] 
                                flex flex-col justify-between animate-fadeIn"
                   >
-                    <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-accent to-primary">
+                    <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-accent to-primary max-w-[300px] truncate" title={e.title}>
                       {e.title}
                     </h3>
                     <div className="space-y-2 mt-3">
                       <p className="flex items-center gap-2 text-gray-200">
-                        <User className="w-4 h-4 text-primary" />
-                        <span className="font-semibold text-white">Username:</span> {e.username}
+                        <User className="w-4 h-4 text-primary shrink-0" />
+                        <span className="font-semibold text-white shrink-0">Username:</span>
+                        <span className="text-white max-w-[120px] truncate" title={e.username}>{e.username}</span>
+                        <button
+                          onClick={() => handleCopy(e.username, `username-${i}`)}
+                          className="p-1 rounded-md hover:bg-dark/40 transition flex items-center justify-center shrink-0"
+                          title="Copy username"
+                        >
+                          <Copy className="w-4 h-4 text-gray-300 hover:text-white" />
+                        </button>
                       </p>
+
                       <p className="flex items-center gap-2 text-gray-200">
-                        <Lock className="w-4 h-4 text-accent" />
-                        <span className="font-semibold text-white">Password:</span> {e.password}
+                        <Lock className="w-4 h-4 text-accent shrink-0" />
+                        <span className="font-semibold text-white shrink-0">Password:</span>
+                        <span className="text-white max-w-[120px] truncate" title={e.password}>
+                          {showPassword[i] ? e.password : "••••••••"}
+                        </span>
+                        <button
+                          onClick={() => togglePassword(i)}
+                          className="p-1 rounded-md hover:bg-dark/40 transition flex items-center justify-center shrink-0"
+                          title={showPassword[i] ? "Hide password" : "Show password"}
+                        >
+                          {showPassword[i] ? (
+                            <EyeOff className="w-4 h-4 text-gray-300 hover:text-white" />
+                          ) : (
+                            <Eye className="w-4 h-4 text-gray-300 hover:text-white" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => handleCopy(e.password, `password-${i}`)}
+                          className="p-1 rounded-md hover:bg-dark/40 transition flex items-center justify-center shrink-0"
+                          title="Copy password"
+                        >
+                          <Copy className="w-4 h-4 text-gray-300 hover:text-white" />
+                        </button>
                       </p>
                     </div>
-                    <div className="pt-4 flex justify-end">
+                    <div className="pt-4 flex justify-between items-center">
+                      {copied?.startsWith(`username-${i}`) || copied?.startsWith(`password-${i}`) ? (
+                        <span className="text-accent text-sm font-medium">Copied!</span>
+                      ) : (
+                        <span />
+                      )}
                       <button
                         onClick={() => toggleCard(i)}
                         className="px-3 py-1 rounded-lg bg-gradient-to-r from-primary to-accent 
-                                   text-white text-xs font-medium shadow-md hover:opacity-90"
+                                  text-white text-xs font-medium shadow-md hover:opacity-90"
                       >
                         <EyeOff className="w-4 h-4 inline mr-1" />
                         Hide
