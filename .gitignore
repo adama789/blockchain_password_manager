@@ -10,7 +10,7 @@ pnpm-lock.yaml
 target/
 **/target/
 **/*.rs.bk
-.Cargo.lock
+Cargo.lock
 
 # Anchor
 /.anchor/
