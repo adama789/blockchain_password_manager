@@ -1,6 +1,7 @@
 import { Connection } from "@solana/web3.js";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import { network, opts } from "./config";
+import toast from "react-hot-toast";
 
 export const getProvider = () => {
   const connection = new Connection(network, opts.preflightCommitment);
@@ -13,6 +14,7 @@ export const connectWallet = async () => {
     return resp.publicKey.toString();
   } else {
     window.open("https://phantom.app/", "_blank");
+    toast.error("Phantom Wallet not detected. Please install it to proceed.");
     return;
   }
 };

@@ -1,15 +1,25 @@
+import toast from "react-hot-toast";
+
 export const handleError = (error, context = "Transaction") => {
+  toast.dismiss(); 
+  
   console.error(`${context} error:`, error);
 
   const msg = error?.message || error?.toString() || "Unknown error";
 
+  let userMessage;
+
   if (error?.code === 4001 || msg.includes("User rejected")) {
-    return "Transaction rejected by user.";
+    userMessage = "Transaction rejected by user. Please approve it in your wallet.";
+  } else if (error?.code == -32002) {
+    userMessage = "Connection failed, please refresh the page and try again."
   } else if (msg.includes("debit")) {
-    return "Not enough SOL in wallet. Please top up your balance.";
+    userMessage = "Not enough SOL in wallet. Please top up your balance.";
   } else if (msg.includes("already in use")) {
-    return "Vault already exists for this wallet.";
+    userMessage = "Vault already exists for this wallet.";
   } else {
-    return `${context} failed: ${msg}`;
+    userMessage = `${context} failed: ${msg}`;
   }
+  
+  toast.error(userMessage);
 };

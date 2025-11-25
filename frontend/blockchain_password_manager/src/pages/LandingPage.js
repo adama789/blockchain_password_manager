@@ -3,6 +3,8 @@ import { connectWallet } from "../blockchain/provider";
 import { Navigate } from "react-router-dom";
 import ParticlesBackground from "../components/ParticlesBackground";
 import HeroSection from "../components/LandingPage/Hero/HeroSection";
+import { handleError } from "../utils/vaultErrors";
+import toast from "react-hot-toast";
 
 function LandingPage() {
   const [walletAddress, setWalletAddress] = useState(null);
@@ -11,8 +13,9 @@ function LandingPage() {
     try {
       const address = await connectWallet();
       setWalletAddress(address);
+      toast.success("Wallet connected!");
     } catch (error) {
-      console.error("Wallet connect error:", error);
+      handleError(error, "Wallet connection error");
     }
   };
 

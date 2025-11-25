@@ -14,6 +14,7 @@ import VaultInitForm from "./VaultInitForm";
 import VaultUnlockForm from "./VaultUnlockForm";
 import VaultEntryForm from "./VaultEntryForm";
 import VaultEntryList from "./VaultEntryList";
+import toast from "react-hot-toast";
 
 function VaultContainer() {
   const { vaultPda, vaultBump } = useWallet();
@@ -64,42 +65,48 @@ function VaultContainer() {
   }, [masterVerified, vaultPda, masterPassword]);
 
   const handleInitializeVault = async () => {
-    if (!masterPassword) return alert("Set a master password!");
+    toast.dismiss();
+    if (!masterPassword) return toast.error("Set a master password!");
     try {
       await initializeVault(vaultPda, vaultBump, masterPassword);
       setVaultInitialized(true);
       setMasterVerified(true);
-      alert("Vault initialized!");
+      toast.success("Vault initialized successfully!");
     } catch (error) {
       handleError(error, "Vault initialization");
     }
   };
 
   const verifyMasterPassword = async () => {
+    toast.dismiss();
     try {
       const storedHashArray = await fetchVaultHash(vaultPda);
       if (!storedHashArray)
-        return alert("Vault not found. Please initialize it first.");
+        return toast.error("Vault not found. Please initialize it first.");
       const storedHashHex = Array.from(storedHashArray)
         .map((b) => b.toString(16).padStart(2, "0"))
         .join("");
       const hashHex = CryptoJS.SHA256(masterPassword).toString();
+      
       if (hashHex === storedHashHex) {
         setMasterVerified(true);
-        alert("Master password correct!");
-      } else alert("Incorrect master password!");
+        toast.success("Welcome back! Vault unlocked.");
+      } else {
+        toast.error("Master password incorrect.");
+      }
     } catch (error) {
       handleError(error, "Verify master password");
     }
   };
 
   const handleAddEntry = async (title, username, password) => {
+    toast.dismiss();
     const encryptedTitle = CryptoJS.AES.encrypt(title, masterPassword).toString();
     const encryptedUsername = CryptoJS.AES.encrypt(username, masterPassword).toString();
     const encryptedPassword = CryptoJS.AES.encrypt(password, masterPassword).toString();
     try {
       await addEntry(vaultPda, encryptedTitle, encryptedUsername, encryptedPassword);
-      alert("Entry added!");
+      toast.success("Entry added to Vault!");
       const rawEntries = await fetchEntries(vaultPda);
       if (!rawEntries || rawEntries.length === 0) return;
       const decrypted = rawEntries.map((entry) => ({
@@ -119,11 +126,13 @@ function VaultContainer() {
   };
 
   const handleCopy = (text, key) => {
+    toast.dismiss();
     navigator.clipboard.writeText(text);
     setCopied(key);
+    toast.success("Copied to clipboard!");
 
     if (copyTimeout.current) clearTimeout(copyTimeout.current);
-    copyTimeout.current = setTimeout(() => setCopied(null), 2000);
+    copyTimeout.current = setTimeout(() => setCopied(null), 4000);
   };
 
   const togglePassword = (index) => {
@@ -133,7 +142,7 @@ function VaultContainer() {
   if (!vaultChecked) return null;
 
   return (
-    <>
+    <>   
       <VaultHeader />
 
       <div className="max-w-6xl mx-auto space-y-12">

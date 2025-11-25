@@ -44,7 +44,7 @@ function Sidebar() {
 
       {/* Footer */}
       <div className="p-4 border-t border-primary/30  text-gray-400">
-        © {new Date().getFullYear()} SolanaVault
+        Adam Cedro 318097
       </div>
     </aside>
   );
