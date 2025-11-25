@@ -13,6 +13,7 @@ function LandingPage() {
     try {
       const address = await connectWallet();
       setWalletAddress(address);
+      toast.dismiss();
       toast.success("Wallet connected!");
     } catch (error) {
       handleError(error, "Wallet connection error");
