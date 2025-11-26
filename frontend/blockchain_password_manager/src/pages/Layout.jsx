@@ -24,7 +24,7 @@ export default function Layout({ children }) {
   return (
     <div className="flex min-h-screen bg-gradient-to-b from-dark via-dark/90 to-light text-white">
       {/* Sidebar desktop */}
-      <aside className="w-64 hidden lg:block">
+      <aside className="w-64 hidden lg:block sticky top-0 h-screen">
         <Sidebar />
       </aside>
 
