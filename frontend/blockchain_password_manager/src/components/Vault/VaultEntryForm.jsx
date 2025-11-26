@@ -23,14 +23,14 @@ function EntryForm({ onAdd }) {
         placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="w-full rounded-xl bg-dark border border-primary/30 p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent shadow-inner"
+        className="w-full rounded-xl bg-dark border border-primary/30 p-3 text-primary placeholder-primary/90 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner"
       />
 
       <input
         placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        className="w-full rounded-xl bg-dark border border-secondary/30 p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-secondary shadow-inner"
+        className="w-full rounded-xl bg-dark border border-secondary/30 p-3 text-secondary placeholder-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary shadow-inner"
       />
 
       <input
@@ -38,7 +38,7 @@ function EntryForm({ onAdd }) {
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className="w-full rounded-xl bg-dark border border-accent/30 p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent shadow-inner"
+        className="w-full rounded-xl bg-dark border border-accent/30 p-3 text-accent placeholder-accent/90 focus:outline-none focus:ring-2 focus:ring-accent shadow-inner"
       />
 
       <button

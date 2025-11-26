@@ -14,6 +14,7 @@ import VaultInitForm from "./VaultInitForm";
 import VaultUnlockForm from "./VaultUnlockForm";
 import VaultEntryForm from "./VaultEntryForm";
 import VaultEntryList from "./VaultEntryList";
+import { Search, X } from "lucide-react";
 import toast from "react-hot-toast";
 
 function VaultContainer() {
@@ -26,6 +27,7 @@ function VaultContainer() {
   const [revealed, setRevealed] = useState({});
   const [copied, setCopied] = useState(null);
   const [showPassword, setShowPassword] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
   const copyTimeout = useRef(null);
 
   useEffect(() => {
@@ -139,10 +141,17 @@ function VaultContainer() {
     setShowPassword((prev) => ({ ...prev, [index]: !prev[index] }));
   };
 
+  // Filtracja wpisów po tytule i username
+  const filteredEntries = entries.filter(
+    (entry) =>
+      entry.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      entry.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (!vaultChecked) return null;
 
   return (
-    <>   
+    <>
       <VaultHeader />
 
       <div className="max-w-6xl mx-auto space-y-12">
@@ -163,12 +172,41 @@ function VaultContainer() {
         )}
 
         {vaultInitialized && masterVerified && (
-          <div className="space-y-12">
+          <div className="space-y-8">
             <div className="bg-light backdrop-blur-xl border border-primary/30 rounded-2xl p-8 shadow-lg">
               <VaultEntryForm onAdd={handleAddEntry} />
             </div>
+
+            {/* Pole wyszukiwania */}
+            <div className="mb-6">
+              <div className="relative w-full"> 
+                <input
+                  type="text"
+                  placeholder="Search by title or username..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-light pl-12 pr-8 py-2 rounded-xl border border-primary/30 bg-dark text-primary placeholder-primary/90 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner"
+                />
+
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary/70 pointer-events-none p-">
+                  <Search></Search>
+                </span>
+
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-primary/70 hover:text-primary transition-colors p-1"
+                    aria-label="Clear search query"
+                  >
+                    <X></X>
+                  </button>
+                )}
+              </div>
+            </div>
+
             <VaultEntryList
-              entries={entries}
+              entries={filteredEntries}
               revealed={revealed}
               toggleCard={toggleCard}
               copied={copied}
