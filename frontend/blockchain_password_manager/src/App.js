@@ -9,7 +9,7 @@ function App() {
   return (
     <WalletProvider>
       <Toaster
-      position="bottom-center"
+      position="top-center"
       toastOptions={{
         duration: 4000,
         style: {
@@ -20,7 +20,7 @@ function App() {
           boxShadow: "0 0 15px rgba(168, 85, 247, 0.25)",        
           padding: "14px 16px",
           fontSize: "16px",
-          marginBottom: "30px"
+          marginTop: "20px"
         },
         success: {
           iconTheme: {
