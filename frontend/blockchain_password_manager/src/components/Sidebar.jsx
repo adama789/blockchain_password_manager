@@ -12,7 +12,9 @@ function Sidebar() {
   const location = useLocation();
 
   return (
-    <aside className="top-0 left-0 h-full w-64 bg-light border-r border-primary/30 flex flex-col z-50">
+    <aside 
+      className="top-0 left-0 h-full w-64 bg-light/95 backdrop-blur-sm border-r border-primary/30 flex flex-col z-50 shadow-2xl"
+    >
       {/* Logo */}
       <div className="h-16 flex items-center justify-center border-b border-primary/30">
         <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text">
@@ -28,11 +30,11 @@ function Sidebar() {
             <Link
               key={item.name}
               to={item.path}
-              className={`flex items-center gap-3 px-4 py-2 rounded-lg font-medium transition
+              className={`flex items-center gap-3 px-4 py-2 rounded-lg font-medium transition duration-200 transform
                 ${
                   isActive
-                    ? "bg-gradient-to-r from-primary to-accent text-white shadow-glow"
-                    : "text-white/70 hover:text-white hover:bg-white/5"
+                    ? "bg-gradient-to-r from-primary to-accent text-white shadow-[0_0_20px_rgba(199,94,255,0.4)] hover:scale-[1.01]"
+                    : "text-white hover:text-primary hover:bg-primary/10"
                 }`}
             >
               {item.icon}
@@ -43,7 +45,9 @@ function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-primary/30  text-gray-400">
+      <div 
+        className="p-4 border-t border-primary/30 text-center text-primary/70 text-sm font-mono"
+      >
         Adam Cedro 318097
       </div>
     </aside>

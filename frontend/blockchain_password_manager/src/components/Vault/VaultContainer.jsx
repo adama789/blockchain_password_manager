@@ -8,13 +8,14 @@ import {
 } from "../../blockchain/vault";
 import CryptoJS from "crypto-js";
 import { handleError } from "../../utils/vaultErrors";
+import { isStrongPassword } from "../../utils/validation";
 
 import VaultHeader from "./VaultHeader";
-import VaultInitForm from "./VaultInitForm";
-import VaultUnlockForm from "./VaultUnlockForm";
 import VaultEntryForm from "./VaultEntryForm";
 import VaultEntryList from "./VaultEntryList";
-import { Search, X } from "lucide-react";
+import VaultEmpty from "./VaultEmpty";
+import VaultSearchEntries from "./VaultSearchEntries";
+import VaultAuth from "./VaultAuth";
 import toast from "react-hot-toast";
 
 function VaultContainer() {
@@ -69,6 +70,13 @@ function VaultContainer() {
   const handleInitializeVault = async () => {
     toast.dismiss();
     if (!masterPassword) return toast.error("Set a master password!");
+
+    if (!isStrongPassword(masterPassword)) {
+      return toast.error(
+        "Master password must be strong!"
+      );
+    }
+
     try {
       await initializeVault(vaultPda, vaultBump, masterPassword);
       setVaultInitialized(true);
@@ -85,11 +93,12 @@ function VaultContainer() {
       const storedHashArray = await fetchVaultHash(vaultPda);
       if (!storedHashArray)
         return toast.error("Vault not found. Please initialize it first.");
+
       const storedHashHex = Array.from(storedHashArray)
         .map((b) => b.toString(16).padStart(2, "0"))
         .join("");
       const hashHex = CryptoJS.SHA256(masterPassword).toString();
-      
+
       if (hashHex === storedHashHex) {
         setMasterVerified(true);
         toast.success("Welcome back! Vault unlocked.");
@@ -141,7 +150,6 @@ function VaultContainer() {
     setShowPassword((prev) => ({ ...prev, [index]: !prev[index] }));
   };
 
-  // Filtracja wpisów po tytule i username
   const filteredEntries = entries.filter(
     (entry) =>
       entry.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -151,73 +159,53 @@ function VaultContainer() {
   if (!vaultChecked) return null;
 
   return (
-    <>
-      <VaultHeader />
-
+    <div className="text-accent">
+      <VaultHeader 
+        masterVerified={masterVerified}
+      />
       <div className="max-w-6xl mx-auto space-y-12">
-        {!vaultInitialized && (
-          <VaultInitForm
+        {masterVerified ? null : (
+          <VaultAuth 
+            vaultInitialized={vaultInitialized}
+            masterVerified={masterVerified}
             masterPassword={masterPassword}
             setMasterPassword={setMasterPassword}
             handleInitializeVault={handleInitializeVault}
-          />
-        )}
-
-        {vaultInitialized && !masterVerified && (
-          <VaultUnlockForm
-            masterPassword={masterPassword}
-            setMasterPassword={setMasterPassword}
             verifyMasterPassword={verifyMasterPassword}
           />
         )}
-
+        
         {vaultInitialized && masterVerified && (
           <div className="space-y-8">
-            <div className="bg-light backdrop-blur-xl border border-primary/30 rounded-2xl p-8 shadow-lg">
+            <div className="bg-light backdrop-blur-xl border border-primary/30 rounded-2xl p-8 shadow-xl transition duration-500 hover:shadow-[0_0_100px_rgba(199,94,255,0.2)]">
               <VaultEntryForm onAdd={handleAddEntry} />
             </div>
 
-            {/* Pole wyszukiwania */}
-            <div className="mb-6">
-              <div className="relative w-full"> 
-                <input
-                  type="text"
-                  placeholder="Search by title or username..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-light pl-12 pr-8 py-2 rounded-xl border border-primary/30 bg-dark text-primary placeholder-primary/90 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner"
-                />
-
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary/70 pointer-events-none p-">
-                  <Search></Search>
-                </span>
-
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-primary/70 hover:text-primary transition-colors p-1"
-                    aria-label="Clear search query"
-                  >
-                    <X></X>
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <VaultEntryList
-              entries={filteredEntries}
-              revealed={revealed}
-              toggleCard={toggleCard}
-              copied={copied}
-              handleCopy={handleCopy}
-              showPassword={showPassword}
-              togglePassword={togglePassword}
+            <VaultSearchEntries 
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
             />
+            
+            {filteredEntries.length > 0 ? (
+              <VaultEntryList
+                entries={filteredEntries}
+                revealed={revealed}
+                toggleCard={toggleCard}
+                copied={copied}
+                handleCopy={handleCopy}
+                showPassword={showPassword}
+                togglePassword={togglePassword}
+              />
+            ) : (
+              <VaultEmpty
+                entries={entries} 
+                searchQuery={searchQuery}
+              />
+            )}
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 
