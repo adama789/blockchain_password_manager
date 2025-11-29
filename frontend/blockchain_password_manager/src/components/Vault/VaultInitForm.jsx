@@ -3,7 +3,7 @@ import React from "react";
 
 function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVault }) {
   const checks = {
-    length: masterPassword.length >= 12,
+    length: masterPassword.length >= 16,
     upper: /[A-Z]/.test(masterPassword),
     lower: /[a-z]/.test(masterPassword),
     digit: /[0-9]/.test(masterPassword),
@@ -49,7 +49,7 @@ function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVaul
       <div className="bg-dark/70 border border-primary/40 rounded-xl p-4 mb-6 shadow-inner">
         <p className="text-white font-bold mb-3 border-b border-primary/30 pb-2">KEY STRENGTH REQUIREMENTS:</p>
         <ul className="text-sm space-y-2 font-mono">
-          <li className={`flex items-center gap-2 ${requirementClass(checks.length)}`}>Minimum 12 characters</li>
+          <li className={`flex items-center gap-2 ${requirementClass(checks.length)}`}>Minimum 16 characters</li>
           <li className={`flex items-center gap-2 ${requirementClass(checks.upper)}`}>At least one uppercase letter (A-Z)</li>
           <li className={`flex items-center gap-2 ${requirementClass(checks.lower)}`}>At least one lowercase letter (a-z)</li>
           <li className={`flex items-center gap-2 ${requirementClass(checks.digit)}`}>At least one number (0-9)</li>
