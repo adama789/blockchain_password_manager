@@ -1,12 +1,15 @@
 import { Key } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 
 function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVault }) {
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const checks = {
     length: masterPassword.length >= 16,
     upper: /[A-Z]/.test(masterPassword),
     lower: /[a-z]/.test(masterPassword),
     digit: /[0-9]/.test(masterPassword),
+    match: masterPassword === confirmPassword && masterPassword.length > 0,
   };
 
   const requirementClass = (ok) => (ok ? "text-green-400 font-bold" : "text-accent/60");
@@ -35,13 +38,25 @@ function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVaul
       <label htmlFor="init-password" className="bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text font-semibold text-sm">
         New Master Key:
       </label>
-
       <input
         id="init-password"
         placeholder="Set a master password..."
         type="password"
         value={masterPassword}
         onChange={(e) => setMasterPassword(e.target.value)}
+        className="w-full rounded-xl font-semibold bg-dark/60 border border-primary/50 shadow-[0_0_100px_rgba(199,94,255,0.15)] 
+        p-3 mb-4 mt-2 text-accent placeholder-accent/50 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner transition duration-300"
+      />
+
+      <label htmlFor="confirm-password" className="bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text font-semibold text-sm">
+        Confirm Master Key:
+      </label>
+      <input
+        id="confirm-password"
+        placeholder="Repeat master password..."
+        type="password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
         className="w-full rounded-xl font-semibold bg-dark/60 border border-primary/50 shadow-[0_0_100px_rgba(199,94,255,0.15)] 
         p-3 mb-6 mt-2 text-accent placeholder-accent/50 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner transition duration-300"
       />
@@ -53,6 +68,7 @@ function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVaul
           <li className={`flex items-center gap-2 ${requirementClass(checks.upper)}`}>At least one uppercase letter (A-Z)</li>
           <li className={`flex items-center gap-2 ${requirementClass(checks.lower)}`}>At least one lowercase letter (a-z)</li>
           <li className={`flex items-center gap-2 ${requirementClass(checks.digit)}`}>At least one number (0-9)</li>
+          <li className={`flex items-center gap-2 ${requirementClass(checks.match)}`}>Passwords match</li>
         </ul>
       </div>
 

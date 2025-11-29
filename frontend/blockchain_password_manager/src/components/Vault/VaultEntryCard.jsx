@@ -68,7 +68,7 @@ function VaultEntryCard({ entry, index, isRevealed, toggleCard, showPassword, to
             title={copied[`username-${index}`] ? "Copied!" : "Copy username"}
           >
             {copied[`username-${index}`] ? (
-              <Check className="w-4 h-4 text-accent animate-in zoom-in" />
+              <Check className="w-4 h-4 text-primary animate-in zoom-in" />
             ) : (
               <Copy className="w-4 h-4 text-primary/70 hover:text-primary" />
             )}
