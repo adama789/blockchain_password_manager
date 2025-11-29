@@ -1,11 +1,12 @@
 import React from "react";
-import { Home, Lock, Settings } from "lucide-react";
+import { Home, Lock, Settings, Dice5 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import LogoImage from "./logo.png";
 
 const navItems = [
   { name: "Home", path: "/", icon: <Home size={20} /> },
   { name: "Vault", path: "/vault", icon: <Lock size={20} /> },
+  { name: "Password Generator", path: "/password_generator", icon: <Dice5 size={20} /> },
   { name: "Settings", path: "/settings", icon: <Settings size={20} /> },
 ];
 
