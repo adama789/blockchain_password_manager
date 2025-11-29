@@ -11,11 +11,11 @@ function Topbar({ walletAddress, onMenuClick }) {
     navigator.clipboard.writeText(walletAddress);
     setCopied(true);
     toast.dismiss()
-    toast.success("Copied to clipboard!");
+    toast.success("Wallet address copied to clipboard!");
 
     setTimeout(() => {
       setCopied(false);
-    }, 2000);
+    }, 4000);
   };
 
   return (
@@ -47,11 +47,11 @@ function Topbar({ walletAddress, onMenuClick }) {
               className="ml-2 p-1 rounded-md transition hover:bg-primary/20 shrink-0"
               title={copied ? "Copied!" : "Copy address"}
             >
-              {copied ? (
-                <Check className="w-4 h-4 text-accent animate-in zoom-in" />
-              ) : (
-                <Copy className="w-4 h-4 text-primary/70 hover:text-primary" /> 
-              )}
+            {copied ? (
+              <Check className="w-4 h-4 text-accent animate-in zoom-in" />
+            ) : (
+              <Copy className="w-4 h-4 text-accent/70 hover:text-accent" />
+            )}
             </button>
           </div>
 
