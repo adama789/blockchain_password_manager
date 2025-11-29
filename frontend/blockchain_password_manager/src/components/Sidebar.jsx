@@ -1,6 +1,7 @@
 import React from "react";
 import { Home, Lock, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import LogoImage from "./logo.png";
 
 const navItems = [
   { name: "Home", path: "/", icon: <Home size={20} /> },
@@ -17,9 +18,11 @@ function Sidebar() {
     >
       {/* Logo */}
       <div className="h-16 flex items-center justify-center border-b border-primary/30">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text">
-          SolanaVault
-        </h1>
+        <img 
+          src={LogoImage} 
+          alt="Solana Vault" 
+          className="h-12 w-auto"
+        />
       </div>
 
       {/* Navigation */}

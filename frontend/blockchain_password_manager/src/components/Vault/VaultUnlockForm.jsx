@@ -20,7 +20,7 @@ function VaultUnlockForm({ masterPassword, setMasterPassword, verifyMasterPasswo
         <p className="mt-2 text-primary/90 text-sm">Decrypted access required.</p>
       </div>
 
-      <label htmlFor="master-password" className="mb-2 block text-primary font-semibold text-sm">
+      <label htmlFor="master-password" className="bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text font-semibold text-sm">
         Master Key:
       </label>
 
@@ -31,7 +31,7 @@ function VaultUnlockForm({ masterPassword, setMasterPassword, verifyMasterPasswo
         value={masterPassword}
         onChange={(e) => setMasterPassword(e.target.value)}
         className="w-full rounded-xl font-semibold bg-dark/60 border border-primary/50 shadow-[0_0_100px_rgba(199,94,255,0.15)] 
-        p-3 mb-6 text-accent placeholder-accent/50 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner transition duration-300"
+        p-3 mb-6 mt-2 text-accent placeholder-accent/50 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner transition duration-300"
       />
 
       <button

@@ -43,7 +43,6 @@ function EntryForm({ onAdd }) {
     
   const buttonBaseClass = "absolute top-1/2 -translate-y-1/2 transition font-bold p-1 rounded-full";
 
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <input

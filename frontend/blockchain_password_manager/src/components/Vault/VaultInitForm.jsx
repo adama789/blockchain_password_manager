@@ -13,7 +13,7 @@ function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVaul
   const allChecksPassed = Object.values(checks).every(Boolean);
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // blokuje przeładowanie strony
+    e.preventDefault();
     if (allChecksPassed) {
       handleInitializeVault();
     }
@@ -32,7 +32,7 @@ function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVaul
         <p className="mt-2 text-primary/90 text-sm">Create the vault encryption key.</p>
       </div>
 
-      <label htmlFor="init-password" className="mb-2 block text-primary font-semibold text-sm">
+      <label htmlFor="init-password" className="bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text font-semibold text-sm">
         New Master Key:
       </label>
 
@@ -43,7 +43,7 @@ function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVaul
         value={masterPassword}
         onChange={(e) => setMasterPassword(e.target.value)}
         className="w-full rounded-xl font-semibold bg-dark/60 border border-primary/50 shadow-[0_0_100px_rgba(199,94,255,0.15)] 
-        p-3 mb-4 text-accent placeholder-accent/50 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner transition duration-300"
+        p-3 mb-6 mt-2 text-accent placeholder-accent/50 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner transition duration-300"
       />
 
       <div className="bg-dark/70 border border-primary/40 rounded-xl p-4 mb-6 shadow-inner">
