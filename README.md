@@ -1,3 +1,5 @@
+<img width="1024" height="281" alt="45def748-5da7-444a-8c1d-d71e8073493b" src="https://github.com/user-attachments/assets/edcadfa6-36cc-423f-ab63-1f9e2585fbc6" />
+
 # 🔐 Blockchain Password Manager
 
 A decentralized password manager built on the Solana blockchain using the Anchor framework. This project allows secure password storage using smart contracts.
@@ -105,11 +107,17 @@ To deploy it:
 ### Main page
 <img width="1919" height="956" alt="image" src="https://github.com/user-attachments/assets/cb3c2c7e-9322-4500-a1f8-ff5ec7ed09d3" />
 
+---
+
 ### Initiate vault
 <img width="1916" height="997" alt="image" src="https://github.com/user-attachments/assets/bc8b8e04-bf75-493d-8f4c-0e86cb02a74f" />
 
+---
+
 ### Vault first sight
 <img width="1919" height="996" alt="image" src="https://github.com/user-attachments/assets/a94397a8-18ef-4780-9322-048d5e49233e" />
+
+---
 
 ### Retrieving vault entries
 <img width="1919" height="996" alt="image" src="https://github.com/user-attachments/assets/f8b3c456-1d3e-49ef-8b25-408c9f68425e" />
