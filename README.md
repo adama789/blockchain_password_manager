@@ -104,25 +104,25 @@ To deploy it:
 
 ## ✨ Demo
 
-### Main Page
+### Main Page 🏠
 <img width="1919" height="956" alt="image" src="https://github.com/user-attachments/assets/cb3c2c7e-9322-4500-a1f8-ff5ec7ed09d3" />
 
 ---
 
-### Initiate Vault
+### Initiate Vault 🔐
 <img width="1916" height="997" alt="image" src="https://github.com/user-attachments/assets/bc8b8e04-bf75-493d-8f4c-0e86cb02a74f" />
 
 ---
 
-### Vault Overview
+### Vault Overview 👀
 <img width="1919" height="996" alt="image" src="https://github.com/user-attachments/assets/a94397a8-18ef-4780-9322-048d5e49233e" />
 
 ---
 
-### Fetching Entries
+### Fetching Entries ⏳
 <img width="1919" height="996" alt="image" src="https://github.com/user-attachments/assets/f8b3c456-1d3e-49ef-8b25-408c9f68425e" />
 
 ---
 
-### Password Generator
+### Password Generator 🔑
 <img width="1919" height="995" alt="image" src="https://github.com/user-attachments/assets/7d769cc4-c2a8-4d10-9722-9c5f557930f4" />
