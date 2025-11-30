@@ -10,7 +10,7 @@ export const handleError = (error, context = "Transaction") => {
   let userMessage;
 
   if (error?.code === 4001 || msg.includes("User rejected")) {
-    userMessage = "Transaction rejected by user. Please approve it in your wallet.";
+    userMessage = "Transaction rejected by user.";
   } else if (error?.code == -32002) {
     userMessage = "Connection failed, please refresh the page and try again."
   } else if (msg.includes("debit")) {

@@ -5,6 +5,8 @@ import {
   addEntry,
   fetchVaultHash,
   fetchEntries,
+  updateEntry,
+  deleteEntry
 } from "../../blockchain/vault";
 import CryptoJS from "crypto-js";
 import { handleError } from "../../utils/vaultErrors";
@@ -132,6 +134,56 @@ function VaultContainer() {
     }
   };
 
+  const handleUpdateEntry = async (index, newData) => {
+    toast.dismiss();
+
+    const encryptedTitle = CryptoJS.AES.encrypt(newData.title, masterPassword).toString();
+    const encryptedUsername = CryptoJS.AES.encrypt(newData.username, masterPassword).toString();
+    const encryptedPassword = CryptoJS.AES.encrypt(newData.password, masterPassword).toString();
+
+    try {
+      await updateEntry(
+        vaultPda,
+        index,
+        encryptedTitle,
+        encryptedUsername,
+        encryptedPassword
+      );
+
+      toast.success("Entry updated!");
+
+      const rawEntries = await fetchEntries(vaultPda);
+      const decrypted = rawEntries.map((entry) => ({
+        title: CryptoJS.AES.decrypt(entry.title, masterPassword).toString(CryptoJS.enc.Utf8),
+        username: CryptoJS.AES.decrypt(entry.username, masterPassword).toString(CryptoJS.enc.Utf8),
+        password: CryptoJS.AES.decrypt(entry.password, masterPassword).toString(CryptoJS.enc.Utf8),
+      }));
+
+      setEntries(decrypted);
+    } catch (error) {
+      handleError(error, "Update entry");
+    }
+  };
+
+  const handleDeleteEntry = async (index) => {
+    toast.dismiss();
+    try {
+      await deleteEntry(vaultPda, index);
+      toast.success("Entry deleted!");
+
+      const rawEntries = await fetchEntries(vaultPda);
+      const decrypted = rawEntries.map((entry) => ({
+        title: CryptoJS.AES.decrypt(entry.title, masterPassword).toString(CryptoJS.enc.Utf8),
+        username: CryptoJS.AES.decrypt(entry.username, masterPassword).toString(CryptoJS.enc.Utf8),
+        password: CryptoJS.AES.decrypt(entry.password, masterPassword).toString(CryptoJS.enc.Utf8),
+      }));
+
+      setEntries(decrypted);
+    } catch (error) {
+      handleError(error, "Delete entry");
+    }
+  };
+
   const toggleCard = (index) => {
     setRevealed((prev) => ({ ...prev, [index]: !prev[index] }));
   };
@@ -195,6 +247,8 @@ function VaultContainer() {
                 handleCopy={handleCopy}
                 showPassword={showPassword}
                 togglePassword={togglePassword}
+                onUpdate={handleUpdateEntry}
+                onDelete={handleDeleteEntry}
               />
             ) : (
               <VaultEmpty

@@ -44,6 +44,32 @@ export const addEntry = async (vaultPda, title, username, password) => {
     .rpc();
 };
 
+export const updateEntry = async (vaultPda, index, newTitle, newUsername, newPassword) => {
+  const provider = getProvider();
+  const program = new Program(idl, provider);
+
+  return program.methods
+    .updateEntry(index, newTitle, newUsername, newPassword)
+    .accounts({
+      vault: vaultPda,
+      user: provider.wallet.publicKey,
+    })
+    .rpc();
+};
+
+export const deleteEntry = async (vaultPda, index) => {
+  const provider = getProvider();
+  const program = new Program(idl, provider);
+
+  return program.methods
+    .deleteEntry(index)
+    .accounts({
+      vault: vaultPda,
+      user: provider.wallet.publicKey,
+    })
+    .rpc();
+};
+
 export const fetchEntries = async (vaultPda) => {
   const provider = getProvider();
   const program = new Program(idl, provider);
