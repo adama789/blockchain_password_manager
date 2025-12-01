@@ -121,7 +121,7 @@ Create your vault to securely store and manage your sensitive data.
 ### Vault Overview 👀
 See your vault’s contents and explore saved entries at a glance.
 
-<img width="1905" height="995" alt="image" src="https://github.com/user-attachments/assets/cb1a4569-810b-4e7c-a45e-734c23e584b7" />
+<img width="1919" height="992" alt="image" src="https://github.com/user-attachments/assets/8a00bad8-b942-4153-b289-8eeecc5dec4b" />
 
 ---
 
