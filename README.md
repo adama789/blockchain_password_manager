@@ -107,7 +107,7 @@ To deploy it:
 ### Main Page 🏠
 Get a quick look and connect your wallet.
 
-<img width="1919" height="956" alt="image" src="https://github.com/user-attachments/assets/cb3c2c7e-9322-4500-a1f8-ff5ec7ed09d3" />
+<img width="1919" height="967" alt="image" src="https://github.com/user-attachments/assets/ef5566f1-1ca7-414c-a005-aac3a680b651" />
 
 ---
 
@@ -121,14 +121,14 @@ Create your vault to securely store and manage your sensitive data.
 ### Vault Overview 👀
 See your vault’s contents and explore saved entries at a glance.
 
-<img width="1919" height="996" alt="image" src="https://github.com/user-attachments/assets/a94397a8-18ef-4780-9322-048d5e49233e" />
+<img width="1905" height="995" alt="image" src="https://github.com/user-attachments/assets/cb1a4569-810b-4e7c-a45e-734c23e584b7" />
 
 ---
 
 ### Fetching Entries ⏳
 Quickly retrieve all your stored items with secure access.
 
-<img width="1919" height="996" alt="image" src="https://github.com/user-attachments/assets/f8b3c456-1d3e-49ef-8b25-408c9f68425e" />
+<img width="1905" height="995" alt="image" src="https://github.com/user-attachments/assets/56cc796a-0038-46dd-9999-6f3dae364dc8" />
 
 ---
 
