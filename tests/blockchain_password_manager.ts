@@ -1,51 +1,107 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { BlockchainPasswordManager } from "../target/types/blockchain_password_manager";
+import { expect } from "chai";
 
 describe("blockchain_password_manager", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
-  const program = anchor.workspace.BlockchainPasswordManager as Program<BlockchainPasswordManager>;
+  const program = anchor.workspace
+    .BlockchainPasswordManager as Program<BlockchainPasswordManager>;
 
-  let vaultAccount: anchor.web3.Keypair;
+  const user = provider.wallet.publicKey;
 
-  it("Initializes an account with a value", async () => {
-    vaultAccount = anchor.web3.Keypair.generate();
+  let vaultPda: anchor.web3.PublicKey;
+  let bump: number;
 
-    const tx = await program.methods
-      .initializeVault()
-      .accounts({
-        vault: vaultAccount.publicKey,
-        user: provider.wallet.publicKey,
-        // systemProgram: anchor.web3.SystemProgram.programId,
-      })
-      .signers([vaultAccount])
-      .rpc();
+  const MASTER_PASSWORD = "mojeHasloGlowne123!@#";
 
-    console.log("Your transaction signature", tx);
-
-    const fetchedVault = await program.account.passwordVault.fetch(vaultAccount.publicKey);
-    console.log("Fetched owner:", fetchedVault.owner.toBase58());
-    console.log("Fetched entries:", fetchedVault.entries);
+  before(async () => {
+    [vaultPda, bump] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("vault"), user.toBuffer()],
+      program.programId
+    );
   });
-  
-  it("Adds an entry to the vault", async () => {
-    const title = "My Email";
-    const username = "me@example.com";
-    const password = "supersecretpassword";
 
-    const tx = await program.methods
-      .addEntry(title, username, password)
+  it("Initializes the vault", async () => {
+    await program.methods
+      .initializeVault(bump, MASTER_PASSWORD)
       .accounts({
-        vault: vaultAccount.publicKey,
-        user: provider.wallet.publicKey,
+        vault: vaultPda,
+        user,
       })
       .rpc();
 
-    console.log("Entry added, tx:", tx);
+    const vault = await program.account.passwordVault.fetch(vaultPda);
 
-    const vault = await program.account.passwordVault.fetch(vaultAccount.publicKey);
-    console.log("Vault entries:", vault.entries);
+    expect(vault.owner.toBase58()).to.equal(user.toBase58());
+    expect(vault.entries.length).to.equal(0);
+  });
+
+  it("Adds an entry", async () => {
+    await program.methods
+      .addEntry("Email", "adam.cedro@mat.umk.pl", "secret123")
+      .accounts({
+        vault: vaultPda,
+        user,
+      })
+      .rpc();
+
+    const vault = await program.account.passwordVault.fetch(vaultPda);
+
+    expect(vault.entries.length).to.equal(1);
+    expect(vault.entries[0].title).to.equal("Email");
+  });
+
+  it("Updates an entry", async () => {
+    await program.methods
+      .updateEntry(
+        0,
+        "Email-updated",
+        "user2@example.com",
+        "pass999"
+      )
+      .accounts({
+        vault: vaultPda,
+        user,
+      })
+      .rpc();
+
+    const vault = await program.account.passwordVault.fetch(vaultPda);
+
+    expect(vault.entries[0].title).to.equal("Email-updated");
+  });
+
+  it("Deletes an entry", async () => {
+    await program.methods
+      .deleteEntry(0)
+      .accounts({
+        vault: vaultPda,
+        user,
+      })
+      .rpc();
+
+    const vault = await program.account.passwordVault.fetch(vaultPda);
+
+    expect(vault.entries.length).to.equal(0);
+  });
+
+  it("Fails when index is invalid", async () => {
+    let failed = false;
+
+    try {
+      await program.methods
+        .deleteEntry(99)
+        .accounts({
+          vault: vaultPda,
+          user,
+        })
+        .rpc();
+    } catch (e) {
+      failed = true;
+    }
+
+    expect(failed).to.be.true;
   });
 });
