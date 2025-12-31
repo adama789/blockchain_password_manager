@@ -1,20 +1,37 @@
 import { Key } from "lucide-react";
 import React, { useState } from "react";
 
+/**
+ * VaultInitForm Component
+ * * The first screen a new user sees. It handles the creation of the Master Password,
+ * which is used both for on-chain verification (as a SHA-256 hash) and local 
+ * encryption (AES-256).
+ */
 function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVault }) {
+  // Local state for confirmation to prevent typos during vault creation
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  /**
+   * Real-time validation object.
+   * Enforces high security standards required for blockchain storage.
+   */
   const checks = {
-    length: masterPassword.length >= 16,
+    length: masterPassword.length >= 16, // Long entropy requirement
     upper: /[A-Z]/.test(masterPassword),
     lower: /[a-z]/.test(masterPassword),
     digit: /[0-9]/.test(masterPassword),
     match: masterPassword === confirmPassword && masterPassword.length > 0,
   };
 
+  /** Helper to apply conditional styling to the requirement list */
   const requirementClass = (ok) => (ok ? "text-green-400 font-bold" : "text-accent/60");
+  
+  /** Boolean to enable/disable the submit button */
   const allChecksPassed = Object.values(checks).every(Boolean);
 
+  /**
+   * Prevents accidental submission and ensures requirements are met.
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
     if (allChecksPassed) {
@@ -27,6 +44,7 @@ function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVaul
       onSubmit={handleSubmit}
       className="bg-light backdrop-blur-xl border border-primary/30 rounded-2xl p-8 max-w-md mx-auto shadow-xl transition duration-500 hover:shadow-[0_0_100px_rgba(199,94,255,0.2)]"
     >
+      {/* Header Section */}
       <div className="flex flex-col items-center mb-6">
         <div className="bg-primary/10 p-5 rounded-full mb-5 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_30px_rgba(199,94,255,0.2)]">
           <Key className="w-8 h-8 text-primary" />
@@ -35,6 +53,7 @@ function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVaul
         <p className="mt-2 text-primary/90 text-sm">Create the vault encryption key.</p>
       </div>
 
+      {/* Primary Password Input */}
       <label htmlFor="init-password" className="bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text font-semibold text-sm">
         New Master Key:
       </label>
@@ -48,6 +67,7 @@ function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVaul
         p-3 mb-4 mt-2 text-accent placeholder-accent/50 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner transition duration-300"
       />
 
+      {/* Confirmation Input */}
       <label htmlFor="confirm-password" className="bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text font-semibold text-sm">
         Confirm Master Key:
       </label>
@@ -61,6 +81,7 @@ function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVaul
         p-3 mb-6 mt-2 text-accent placeholder-accent/50 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner transition duration-300"
       />
 
+      {/* Requirement Feedback Checklist */}
       <div className="bg-dark/70 border border-primary/40 rounded-xl p-4 mb-6 shadow-inner">
         <p className="text-white font-bold mb-3 border-b border-primary/30 pb-2">KEY STRENGTH REQUIREMENTS:</p>
         <ul className="text-sm space-y-2 font-mono">
@@ -72,6 +93,7 @@ function VaultInitForm({ masterPassword, setMasterPassword, handleInitializeVaul
         </ul>
       </div>
 
+      {/* Submit Button - Disabled unless all criteria are met */}
       <button
         type="submit"
         disabled={!allChecksPassed}

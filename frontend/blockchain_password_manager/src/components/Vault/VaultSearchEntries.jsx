@@ -1,9 +1,14 @@
 import { Search, X } from "lucide-react";
 
+/**
+ * VaultSearchEntries Component
+ * * Provides a specialized input field for real-time filtering of the vault entries.
+ */
 function VaultSearchEntries({ searchQuery, setSearchQuery }) {
   return (
     <div className="mb-6">
         <div className="relative w-full">
+          {/* Main Search Input */}
           <input
             type="text"
             placeholder="Search by title or username..."
@@ -15,10 +20,14 @@ function VaultSearchEntries({ searchQuery, setSearchQuery }) {
                       focus:outline-none focus:ring-2 focus:ring-accent shadow-inner transition"
           />
 
+          {/* Left-side Decorative Search Icon */}
           <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-accent/70">
             <Search />
           </span>
 
+          {/* Conditional Rendering: Clear Button 
+            Only appears when the user has typed something, allowing for a quick reset.
+          */}
           {searchQuery && (
             <button
               type="button"

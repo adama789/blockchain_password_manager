@@ -1,5 +1,9 @@
 import React from "react";
 
+/**
+ * Loading Component
+ * * A reusable UI spinner used to indicate background processing.
+ */
 export default function Loading({ message = "Loading..." }) {
   return (
     <div className="flex flex-col items-center justify-center w-full h-full">

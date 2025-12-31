@@ -1,5 +1,12 @@
 import VaultEntryCard from "./VaultEntryCard";
 
+/**
+ * VaultEntryList Component
+ * * Responsible for rendering the collection of vault entries in a responsive grid.
+ * It maps through the decrypted entries and passes down the necessary state 
+ * and control functions to each individual VaultEntryCard.
+ */
+
 function VaultEntryList({
   entries,
   revealed,

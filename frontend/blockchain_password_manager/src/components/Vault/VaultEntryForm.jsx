@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, Dice1, Dice2, Dice3, Dice4, Dice5, Dice6 } from "lucide-react";
 
+/** Array of Lucide icons used to provide visual variety to the generation button */
 const diceIcons = [Dice1, Dice2, Dice3, Dice4, Dice5, Dice6];
+
+/**
+ * EntryForm Component
+ * * Provides a user interface for creating new password entries.
+ * Features:
+ * - Local state management for title, username, and password.
+ * - Secure password generation logic with character variety.
+ * - Password visibility toggling.
+ * - Visual feedback via dynamic "Dice" icons.
+ */
 
 function EntryForm({ onAdd }) {
   const [title, setTitle] = useState("");
@@ -10,32 +21,45 @@ function EntryForm({ onAdd }) {
   const [showPassword, setShowPassword] = useState(false);
   const [diceIcon, setDiceIcon] = useState(Dice5);
 
+  /**
+   * Generates a cryptographically strong random password.
+   * Ensures at least one lowercase, one uppercase, one number, and one special character.
+   */
   const generatePassword = () => {
     const length = 16;
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
     let newPassword = "";
 
+    // Guarantee inclusion of various character types
     newPassword += "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)];
     newPassword += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 26)];
     newPassword += "0123456789"[Math.floor(Math.random() * 10)];
     newPassword += "!@#$%^&*()_+~`|}{[]:;?><,./-="[Math.floor(Math.random() * 27)];
 
+    // Fill the rest of the password length
     for (let i = newPassword.length; i < length; i++) {
       newPassword += charset[Math.floor(Math.random() * charset.length)];
     }
 
+    // Shuffle the string to prevent predictable patterns
     newPassword = newPassword.split("").sort(() => 0.5 - Math.random()).join("");
     setPassword(newPassword);
 
+    // UX: Rotate the dice icon to a new random one on click
     const possibleIcons = diceIcons.filter((icon) => icon !== diceIcon);
     const RandomDice = possibleIcons[Math.floor(Math.random() * possibleIcons.length)];
     setDiceIcon(RandomDice);
   };
 
+  /**
+   * Validates input presence and passes data to the parent's add handler.
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title || !username || !password) return;
     onAdd(title, username, password);
+    
+    // Reset form after submission
     setTitle("");
     setUsername("");
     setPassword("");
@@ -53,6 +77,7 @@ function EntryForm({ onAdd }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Title Input */}
       <input
         placeholder="Title..."
         value={title}
@@ -61,6 +86,7 @@ function EntryForm({ onAdd }) {
         className={inputClass.replace("pr-24", "pr-12")}
       />
 
+      {/* Username Input */}
       <input
         placeholder="Username..."
         value={username}
@@ -69,6 +95,7 @@ function EntryForm({ onAdd }) {
         className={inputClass.replace("pr-24", "pr-12")}
       />
 
+      {/* Password Input with inner buttons */}
       <div className="relative">
         <input
           type={showPassword ? "text" : "password"}
@@ -79,7 +106,7 @@ function EntryForm({ onAdd }) {
           className={inputClass}
         />
 
-        {/* Przycisk generate password z losową ikoną Dice */}
+        {/* Generate Password Button */}
         <button
           type="button"
           onClick={generatePassword}
@@ -89,7 +116,7 @@ function EntryForm({ onAdd }) {
           <DiceIconComponent className="w-6 h-6 text-accent/70 hover:text-accent" />
         </button>
 
-        {/* Przycisk show/hide password */}
+        {/* Visibility Toggle Button */}
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
@@ -104,6 +131,7 @@ function EntryForm({ onAdd }) {
         </button>
       </div>
 
+      {/* Form Submission Button */}
       <button
         type="submit"
         className="w-full bg-gradient-to-r from-primary to-accent text-white font-bold py-3 rounded-xl transition duration-300 shadow-[0_0_40px_rgba(199,94,255,0.4)] hover:shadow-[0_0_60px_rgba(199,94,255,0.6)] transform hover:scale-[1.01]"

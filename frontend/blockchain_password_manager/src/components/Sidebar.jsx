@@ -3,21 +3,30 @@ import { Home, Lock, Settings, Dice5 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import LogoImage from "./logo.png";
 
+/**
+ * Navigation items configuration.
+ * Defines the label, destination path, and associated icon for each sidebar link.
+ */
 const navItems = [
-  { name: "Home", path: "/", icon: <Home size={20} /> },
+  { name: "Main Page", path: "/", icon: <Home size={20} /> },
   { name: "Vault", path: "/vault", icon: <Lock size={20} /> },
   { name: "Password Generator", path: "/password_generator", icon: <Dice5 size={20} /> },
   { name: "Settings", path: "/settings", icon: <Settings size={20} /> },
 ];
 
+/**
+ * Sidebar Component
+ * * Provides the primary navigation structure for the application.
+ */
 function Sidebar() {
+  /** Hook to detect the current URL path for active state styling */
   const location = useLocation();
 
   return (
     <aside 
       className="top-0 left-0 h-full w-64 bg-light/95 backdrop-blur-sm border-r border-primary/30 flex flex-col z-50 shadow-2xl"
     >
-      {/* Logo */}
+      {/* BRANDING: Logo section with bottom border matching the topbar height */}
       <div className="h-16 flex items-center justify-center border-b border-primary/30">
         <img 
           src={LogoImage} 
@@ -26,10 +35,12 @@ function Sidebar() {
         />
       </div>
 
-      {/* Navigation */}
+      {/* NAVIGATION: Dynamic list of links */}
       <nav className="flex-1 px-4 py-6 space-y-2">
         {navItems.map((item) => {
+          // Check if the current route matches the item's path
           const isActive = location.pathname === item.path;
+          
           return (
             <Link
               key={item.name}
@@ -48,7 +59,7 @@ function Sidebar() {
         })}
       </nav>
 
-      {/* Footer */}
+      {/* FOOTER: Static developer identification info */}
       <div 
         className="p-4 border-t border-primary/30 text-center text-primary/70 text-sm font-mono"
       >
